@@ -1,0 +1,13 @@
+The plugin requires the sqlite plugin.  
+
+It is a working version, but possible useable.
+
+In its current state it has an administrative panel which enables the user to create a database
+of commits from a git specified in a hard-coded path in helper.php, both in the function _getDB() 
+and in the constructor.  This will eventually be upgraded to something  more convenient.
+
+In its present from it can be queried from the sqlite plugin admin panel.
+
+The initial imetus behind this plugin is to help determine recent changes to Dokuiwiki
+which might impact on plugin authors, so that they can get advance warning.
+

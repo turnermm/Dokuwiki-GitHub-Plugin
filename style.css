@@ -1,0 +1,6 @@
+div.dwc_msgarea { 
+    padding: 1em; width: 60%; height: 8em;
+    overflow:auto; border: 1px black solid;   
+ }
+div.dwc_msgareatop, div.dwc_extratop {  font-weight:bold; padding-top: 1em; padding-bottom: 4px; }
+div.dwc_git_extra { display: none; }
