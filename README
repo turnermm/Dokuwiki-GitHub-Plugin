@@ -8,6 +8,6 @@ and in the constructor.  This will eventually be upgraded to something  more con
 
 In its present from it can be queried from the sqlite plugin admin panel.
 
-The initial imetus behind this plugin is to help determine recent changes to Dokuiwiki
+The initial impetus behind this plugin is to help determine recent changes to Dokuiwiki
 which might impact on plugin authors, so that they can get advance warning.
 
