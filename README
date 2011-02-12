@@ -1,6 +1,6 @@
 The plugin requires the sqlite plugin.  
 
-It is a working version, but possible useable.
+It is a working version, but possibly useable.
 
 In its current state it has an administrative panel which enables the user to create a database
 of commits from a git specified in a hard-coded path in helper.php, both in the function _getDB() 
