@@ -3,7 +3,7 @@
  * Plugin Skeleton: Displays "Hello World!"
  * 
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Christopher Smith <chris@jalakai.co.uk>
+ * @author     Myron Turner <turnermm02@shaw.ca>
  */
 
 if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');
@@ -24,8 +24,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         $this->helper =& plugin_load('helper', 'dwcommits');        
         $this->db =  $this->helper->_getDB();
         $this->helper->set_branches();
-ini_set('display_errors',1);
-ini_set('error_reporting',E_ALL);
+//ini_set('display_errors',1);
+//ini_set('error_reporting',E_ALL);
 
     }
     /**

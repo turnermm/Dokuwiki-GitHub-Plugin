@@ -1,4 +1,5 @@
 The plugin requires the sqlite plugin.  
+It also requires an intial git.
 
 It is a working version, but possibly useable.
 
@@ -6,8 +7,8 @@ In its current state it has an administrative panel which enables the user to cr
 of commits from a git specified in a hard-coded path in helper.php, both in the function _getDB() 
 and in the constructor.  This will eventually be upgraded to something  more convenient.
 
-In its present from it can be queried from the sqlite plugin admin panel.
+In its present form it can be queried from the sqlite plugin admin panel.
 
-The initial impetus behind this plugin is to help determine recent changes to Dokuiwiki
+The initial impetus behind this plugin is to help determine recent changes to Dokuwiki
 which might impact on plugin authors, so that they can get advance warning.
 
