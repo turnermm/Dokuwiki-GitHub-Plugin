@@ -3,7 +3,7 @@
  * Plugin Skeleton: Displays "Hello World!"
  * 
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author     Myron Turner <turnermm02@shaw.ca>
+ * @author     Christopher Smith <chris@jalakai.co.uk>
  */
 
 if(!defined('DOKU_INC')) define('DOKU_INC',realpath(dirname(__FILE__).'/../../').'/');
@@ -24,8 +24,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         $this->helper =& plugin_load('helper', 'dwcommits');        
         $this->db =  $this->helper->_getDB();
         $this->helper->set_branches();
-//ini_set('display_errors',1);
-//ini_set('error_reporting',E_ALL);
+ini_set('display_errors',1);
+ini_set('error_reporting',E_ALL);
 
     }
     /**
@@ -67,12 +67,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       if (!is_array($_REQUEST['cmd'])) return;
 
      $nov_11 = mktime(0,0,0,11,11,2010);
-     ptln('<pre>');
-     ptln('<pre>');
-    // print_r($_REQUEST);
-     ptln('</pre>');
-
-
+  
+     ptln('<pre>');    // print_r($_REQUEST); 
      ptln('</pre>');
 
       
@@ -97,11 +93,12 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
 
         case 'update' : 
             $start_timestamp = $this->get_timestamp($_REQUEST['dup']);
-             if(!$start_timestamp) $start_timestamp = $nov_11;
-            $this->output = 'date not set';
-return;
-            $this->helper->populate($start_timestamp);
-            $this->output = 'Update';
+             if(!$start_timestamp){
+               $start_timestamp = $nov_11;
+               $this->output = 'date set to default';
+             }
+
+            $this->helper->populate($start_timestamp);          
             break; 
         case 'status' :
             $status = "";
@@ -210,17 +207,18 @@ return;
    function get_timestamp($d) {
       $dstr = implode(' ',$d);
       if(preg_match('/[a-zA-Z]/',$dstr)){
-         msg('Date wasn\'t set:' . $dstr, -1);
+         msg('Date wasn\'t set:' . $dstr . ' Will be set to default', -1);
          return false;      
       }
       if((strlen($d['month']) < 2) || (strlen($d['year']) < 4)||(strlen($d['day']) < 2)  ) {
-                msg('Incorrect date format: ' . $dstr, -1);
+                msg('Incorrect date format: ' . $dstr .' Will be set to default', -1);
       }
 
       if((strlen($d['month']) + strlen($d['year']) + strlen($d['day']) > 8 )  ) {
-                msg('Incorrect date format: ' . $dstr, -1);
+                msg('Incorrect date format: ' . $dstr .' Will be set to default', -1);
       }
 
       return mktime (0,0,0, $d['month'], $d['day'], $d['year']);
    }
 }
+
