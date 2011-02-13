@@ -52,3 +52,4 @@ $lang['btn_status'] = 'Check';
 $lang['header_git_branch'] = 'Change branch';
 $lang['btn_branch'] = 'Branch';
 $lang['branch_names'] = 'Select Branch';
+

@@ -103,7 +103,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
        if(!$this->chdir()) return false;
        $this->branches = array();
        exec("git branch",$retv, $exit_code); 
-//       if(!$exit_code   
+       if($exit_code) return false;   
        foreach ($retv as $branch) {
         if(preg_match('/\*(.*)/',$branch,$matches)) {        
            $this->selected_branch = $matches[1]; 

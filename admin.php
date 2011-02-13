@@ -62,15 +62,11 @@ ini_set('error_reporting',E_ALL);
     
       if (!isset($_REQUEST['cmd'])) return;   // first time - nothing to do
 
-      $this->output = 'invalid';
+     $this->output = 'invalid';
+     $nov_11 = mktime(0,0,0,11,11,2010);  
 
-      if (!is_array($_REQUEST['cmd'])) return;
-
-     $nov_11 = mktime(0,0,0,11,11,2010);
-  
-     ptln('<pre>');    // print_r($_REQUEST); 
-     ptln('</pre>');
-
+     if (!is_array($_REQUEST['cmd'])) return;
+    //ptln('<pre>');      ptln('</pre>');
       
       // verify valid values
       switch (key($_REQUEST['cmd'])) {
