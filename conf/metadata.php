@@ -20,4 +20,5 @@ if(file_exists(DOKU_PLUGIN . 'dwcommits/conf/default.local.ini')) {
 }
 $meta['default_date']  = array('multichoice','_choices' => $dwc_dates);
 $meta['default_git'] = array('multichoice','_choices' => $dwc_gits);
+$meta['git_binary'] = array('string');
 

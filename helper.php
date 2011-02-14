@@ -19,12 +19,15 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
   private $branches;
   private $selected_branch;
   private $sqlite;
-    function __construct() {  
-       //  $this->path = DW_COMMITS . 'db/dokuwiki_updated'; 
-        $this->path = DW_COMMITS . 'db/dokuwiki.1';
+  private $git = '/usr/bin/git';
+    function __construct() {         
+        $this->path = DW_COMMITS . 'db/dokuwiki';
         $this->status_message = array();
         $this->selected_branch="";
         $this->sqlite = 0;  
+        $binary = $this->getConf('git_binary');
+        if(isset($binary)) $this->git=$binary;
+        
     }
 
     /**
@@ -66,30 +69,31 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
         if(!$this->chdir()) return false;
 
         if($which == 'fetch') {
-            exec("git fetch origin",$retv,$exit_code);
-            $status = "status: --" . $exit_code . "--";
-            $this->status_message = array_merge(array(getcwd(),"git fetch origin", $status),$this->status_message,$retv);        
+            exec("$this->git fetch origin",$retv,$exit_code);
+            $status = "exit code: " . $exit_code . " ";
+            $this->status_message = array_merge(array(getcwd(),"$this->git fetch origin", $status),$this->status_message,$retv);        
         }
         elseif($which == 'merge') {
-            exec("git merge origin",$retv, $exit_code);
-            $status = "status: " . $exit_code;
-            $this->status_message = array_merge(array(getcwd(),"git merge origin", $status),$this->status_message,$retv);        
+            exec("$this->git merge origin",$retv, $exit_code);
+            $status = "exit code: " . $exit_code;
+            $this->status_message = array_merge(array(getcwd(),"$this->git merge origin", $status),$this->status_message,$retv);        
         }
         elseif($which == 'commit') {
-            exec('git add .',$retv_add, $exit_code);
-            exec('git commit -mdbupgrade',$retv, $exit_code);
-            $status = "status: " . $exit_code;
+            exec("$this->git add .",$retv_add, $exit_code);
+            exec("git commit -mdbupgrade",$retv, $exit_code);
+            $status = "exit code: " . $exit_code;
             $this->status_message = array_merge(array(getcwd(),"git commit", $status),$this->status_message,$retv_add,$retv);        
+            if($exit_code <=1 ) return true;             
         }
         elseif($which == 'pull') {
-            exec('git pull',$retv, $exit_code);
-            $status = "status: " . $exit_code;
+            exec("$this->git pull",$retv, $exit_code);
+            $status = "exit code: " . $exit_code;
             $this->status_message = array_merge(array(getcwd(),"git pull", $status),$this->status_message,$retv);        
         }
        elseif($which == 'branch') {
             $branch = $_REQUEST['dwc__branch'];
-            exec("git checkout $branch",$retv, $exit_code);
-            $status = "status: " . $exit_code;
+            exec("$this->git checkout $branch",$retv, $exit_code);
+            $status = "exit code: " . $exit_code;
             $this->status_message = array_merge(array(getcwd(),"git checkout $branch", $status),$this->status_message,$retv);        
             $this->set_branches();
         }
@@ -102,7 +106,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
    function set_branches() {
        if(!$this->chdir()) return false;
        $this->branches = array();
-       exec("git branch",$retv, $exit_code); 
+       exec("$this->git branch",$retv, $exit_code); 
        if($exit_code) return false;   
        foreach ($retv as $branch) {
         if(preg_match('/\*(.*)/',$branch,$matches)) {        
@@ -125,17 +129,16 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
           return 'master';  
    }
 
+  /*  Seems git status sometimes returns exit code of 1 event when 0 is expected 
+      So exit code > 0 can't be trusted to report genuine error
+  */
    function get_status() {
-     
+      $this->status_message = array();
       if(!$this->chdir()) return false;
-      if(!exec("git status",$retv) ) {    
-           $this->status_message = $retv;          
-           $this->error(1);          
-           return false;
-      }
-      $this->status_message = $retv;     
-  
-      return true;
+         exec("/usr/local/bin/git status",$retv, $exit_code);    
+         $this->status_message = 
+              array_merge(array(getcwd(),"git status"),$this->status_message,$retv);  
+        return true;
 
    }
   
@@ -172,7 +175,7 @@ function populate($timestamp_start=0,$table='git_commits') {
        $timestamp_start = mktime(0,0,0,11,11,2010);
     }
 
-    $handle = popen("git log", "r");
+    $handle = popen("$this->git log", "r");
     $msg = "";
     $author="";
     $timestamp=0;
@@ -253,11 +256,9 @@ function populate($timestamp_start=0,$table='git_commits') {
      $this->sqlite->query("DROP TABLE git_commits");
      $this->sqlite->query('CREATE TABLE git_commits(author TEXT,timestamp INTEGER,gitid TEXT,msg TEXT, prefix TEXT, PRIMARY KEY(prefix,timestamp))');     
      $this->populate($timestamp_start);
-     $results = $this->sqlite->query('select COUNT(*) as number from git_commits');         
-
-     foreach($results as $n) {
-          $retv = $n[0];
-          return $retv; 
-     }
+     $results = $this->sqlite->query("select count(*) from git_commits");  
+     $res = $this->sqlite->res2single($results);  
+     return $res;
+ 
   }
 }

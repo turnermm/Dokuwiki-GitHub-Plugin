@@ -24,8 +24,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         $this->helper =& plugin_load('helper', 'dwcommits');        
         $this->db =  $this->helper->_getDB();
         $this->helper->set_branches();
-ini_set('display_errors',1);
-ini_set('error_reporting',E_ALL);
+//ini_set('display_errors',1);
+//ini_set('error_reporting',E_ALL);
 
     }
     /**
@@ -66,8 +66,7 @@ ini_set('error_reporting',E_ALL);
      $nov_11 = mktime(0,0,0,11,11,2010);  
 
      if (!is_array($_REQUEST['cmd'])) return;
-    //ptln('<pre>');      ptln('</pre>');
-      
+        
       // verify valid values
       switch (key($_REQUEST['cmd'])) {
         case 'init' :
@@ -116,6 +115,13 @@ ini_set('error_reporting',E_ALL);
     function html() {
      
       global $ID;
+      $date_str = $this->getConf('default_date');
+      if(isset($date_str)) {
+          list($month,$day,$year) = explode('-',$date_str);
+      }
+      else {
+          $month ='MM'; $day='DD'; $year='YYY';
+      }
       ptln('<form action="'.wl($ID).'" method="post">');
       
       // output hidden values to ensure dokuwiki will return back to this plugin
@@ -126,17 +132,17 @@ ini_set('error_reporting',E_ALL);
      /* Initialize Sqlite Database */
       ptln('<b>' . $this->getLang('header_init') .'</b><br />');
       ptln($this->getLang('explain_init') . '<br />');
-      ptln($this->getLang('input_year').'&nbsp;&nbsp;(yyyy):  <input type="text" name="d[year]" size="4" value="YYYY" />&nbsp;&nbsp;'); 
-      ptln($this->getLang('input_month').'&nbsp;&nbsp;(mm):  <input type="text" name="d[month]" size="2" value="MM" />&nbsp;&nbsp;'); 
-      ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="d[day]" size="2" value="DD" />&nbsp;&nbsp;'); 
+      ptln($this->getLang('input_year').'&nbsp;&nbsp;(yyyy):  <input type="text" name="d[year]" size="4" value="'. $year .'" />&nbsp;&nbsp;'); 
+      ptln($this->getLang('input_month').'&nbsp;&nbsp;(mm):  <input type="text" name="d[month]" size="2" value="' .$month . '" />&nbsp;&nbsp;'); 
+      ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="d[day]" size="2" value="' . $day .'" />&nbsp;&nbsp;'); 
       ptln('&nbsp;&nbsp;<input type="submit" name="cmd[init]"  value="'.$this->getLang('btn_init').'" />');
 
       /* Update Sqlite Database */
       ptln('<br /><br /><b>' . $this->getLang('header_update')  .'</b><br />');
       ptln($this->getLang('explain_update') . '<br />');
-      ptln($this->getLang('input_year').'&nbsp;&nbsp;(yyyy):  <input type="text" name="dup[year]" size="4" value="YYYY" />&nbsp;&nbsp;'); 
-      ptln($this->getLang('input_month').'&nbsp;&nbsp;(mm):  <input type="text" name="dup[month]" size="2" value="MM" />&nbsp;&nbsp;'); 
-      ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="dup[day]" size="2" value="DD" />&nbsp;&nbsp;');        
+      ptln($this->getLang('input_year').'&nbsp;&nbsp;(yyyy):  <input type="text" name="dup[year]" size="4" value="'. $year .'" />&nbsp;&nbsp;'); 
+      ptln($this->getLang('input_month').'&nbsp;&nbsp;(mm):  <input type="text" name="dup[month]" size="2" value="'. $month . '" />&nbsp;&nbsp;'); 
+      ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="dup[day]" size="2" value="' . $day .'" />&nbsp;&nbsp;');        
       ptln('&nbsp;&nbsp;<input type="submit" name="cmd[update]"  value="'.$this->getLang('btn_update').'" />');
       
      /* Update git */
