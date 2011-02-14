@@ -24,8 +24,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         $this->helper =& plugin_load('helper', 'dwcommits');        
         $this->db =  $this->helper->_getDB();
         $this->helper->set_branches();
-//ini_set('display_errors',1);
-//ini_set('error_reporting',E_ALL);
+ini_set('display_errors',1);
+ini_set('error_reporting',E_ALL);
 
     }
     /**
@@ -93,7 +93,11 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
                $this->output = 'date set to default';
              }
 
-            $this->helper->populate($start_timestamp);          
+             $retv = $this->helper->populate($start_timestamp); 
+             if(is_array($retv)) {
+               list($num,$recs) = $retv;
+               $this->output = "Records written to database: $num. Records in database: $recs.";
+             }
             break; 
         case 'status' :
             $status = "";
@@ -122,6 +126,19 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       else {
           $month ='MM'; $day='DD'; $year='YYY';
       }
+
+      /*  Navigation Bar  */
+      ptln('<DIV class="dwc_navbar">');
+      ptln('<table cellspacing="4">'); 
+      ptln('<tr><td><a href="javascript:dwc_toggle_div(\'dcw_db_update\'); void 0;">' . $this->getLang('sql_opts') . '</a>');      
+      ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dcw_update_git\'); void 0;">' . $this->getLang('git_opts') . '</a>');
+      ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_git_extra_div\'); void 0;">' . $this->getLang('git_advanced_opts') . '</a>');
+      ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_repos_div\'); void 0;">' . $this->getLang('git_repos') . '</a>');
+      ptln('</table>');
+      ptln('</DIV>');  
+
+
+      /*  Form  */
       ptln('<form action="'.wl($ID).'" method="post">');
       
       // output hidden values to ensure dokuwiki will return back to this plugin
@@ -130,6 +147,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('  <input type="hidden" name="dwc__branch" id="dwc__branch" value="'.  $this->helper->selected_branch() .'" />');
      
      /* Initialize Sqlite Database */
+      ptln('<DIV id="dcw_db_update" class="dwc_box">');
+
       ptln('<b>' . $this->getLang('header_init') .'</b><br />');
       ptln($this->getLang('explain_init') . '<br />');
       ptln($this->getLang('input_year').'&nbsp;&nbsp;(yyyy):  <input type="text" name="d[year]" size="4" value="'. $year .'" />&nbsp;&nbsp;'); 
@@ -144,26 +163,28 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln($this->getLang('input_month').'&nbsp;&nbsp;(mm):  <input type="text" name="dup[month]" size="2" value="'. $month . '" />&nbsp;&nbsp;'); 
       ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="dup[day]" size="2" value="' . $day .'" />&nbsp;&nbsp;');        
       ptln('&nbsp;&nbsp;<input type="submit" name="cmd[update]"  value="'.$this->getLang('btn_update').'" />');
-      
+      ptln('</DIV>');
+
      /* Update git */
-      ptln('<br /><br /><TABLE cellspacing="4">');
+      ptln('<DIV id="dcw_update_git" class="dwc_box">'); 
+      ptln('<br /><TABLE cellspacing="4">');
       ptln('<tr><td colspan="2"><b>'. $this->getLang('header_git') . '</b></td>');
       ptln('<tr><td colspan="5">' . $this->getLang('explain_git') . '</td>');
 
       /* Check Git Status  */
-
       ptln('<tr><td>&nbsp;&nbsp;<input type="submit" name="cmd[status]"  value="'.$this->getLang('btn_status').'" /></td>');
       ptln('<td>' . $this->getLang('header_git_status') . '</td>');
       ptln('<td>&nbsp;</td>');
       ptln('<td>&nbsp;&nbsp;<input type="submit" name="cmd[pull]"  value="'.$this->getLang('btn_pull').'" /></td>');
       ptln('<td>' . $this->getLang('header_git_pull') . '</td>');
-
-
       ptln('</table>');
-      ptln('<DIV class="dwc_extratop" id="dwc_extratop">');
-      ptln('<a href="javascript:dwc_show_extra(); void 0;">' .$this->getLang('header_additional') . '</a>');  
       ptln('</DIV>');
-      ptln('<DIV class="dwc_git_extra" id="dwc_git_extra_div">');
+
+      ptln('<DIV class="dwc_box" id="dwc_git_extra_div">');
+      ptln('<DIV class="dwc_extratop" id="dwc_extratop">');
+      ptln($this->getLang('header_additional'));  
+      ptln('</DIV>');
+
       ptln('<TABLE cellspacing="4" border="0">');
   
       /* Fetch  */
@@ -175,24 +196,43 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('<td align="right"><input type="submit" name="cmd[merge]"  value="'. $this->getLang('btn_merge').'" />');
       ptln('<td>&nbsp;' . $this->getLang('header_git_merge'));
 
-      ptln('<td align="center">' . $this->getLang('branch_names') . '</td>'  );
-      /* Add and Commit  */
-      ptln('<tr><td align="right"><input type="submit" name="cmd[commit]"  value="'.$this->getLang('btn_commit').'" />');
-      ptln('<td>&nbsp;' . $this->getLang('header_git_commit'));
-      ptln('<td>&nbsp;&nbsp;</td>');
 
-      /* Branch  */
-      ptln('<td align="right"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_branch').'" />');
-      ptln('<td>&nbsp;' . $this->getLang('header_git_branch'));
+      /* Add and Commit  */
+      ptln('<td>&nbsp;&nbsp;<td align="right"><input type="submit" name="cmd[commit]"  value="'.$this->getLang('btn_commit').'" />');
+      ptln('<td>&nbsp;' . $this->getLang('header_git_commit'));
+      ptln('<td>&nbsp;&nbsp;</td>'); 
+      ptln('</table>');
+      ptln('</DIV>');   
+
+      ptln('<DIV class="dwc_box" id="dwc_repos_div">');
+
+      ptln('<TABLE cellspacing="4" border="0">');
+
+      /* Branches and Repos*/
+      ptln('<tr><th align="center" colspan="2">' . $this->getLang('branch_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
+      ptln('<td>&nbsp;&nbsp;&nbsp;'); // spacer
+      ptln('<th align="center" colspan="2">' . $this->getLang('repo_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
+
+      ptln('<tr><td align="left"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_branch').'" />');
+      ptln('<td>&nbsp;<Select onchange="dwc_branch(this)">');
+      $this->helper->get_branches();
+      ptln('</Select>');
+
+      ptln('<td>&nbsp;&nbsp;&nbsp;'); // spacer
+
+      /*Repos */
+      ptln('<td align="left"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_repos').'" />');
 
       ptln('<td>&nbsp;<Select onchange="dwc_branch(this)">');
       $this->helper->get_branches();
-      ptln('<td></Select>');
-
+      ptln('</Select>'); 
       ptln('</table>');
-      ptln('</DIV>');
+
+      ptln('</DIV>');   
+   
       ptln('</form>');
 
+   /* Message Area */
       ptln('<br /><div class="dwc_msgareatop">');     
       ptln('Message Area');
       ptln('</div>');

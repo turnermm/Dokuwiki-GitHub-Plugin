@@ -1,18 +1,14 @@
 
-function dwc_show_extra() {
-   var d = document.getElementById('dwc_git_extra_div');
- if(d.style.display && d.style.display == 'block') {
-       dwc_hide_extra() 
- }
- else {
+
+function dwc_toggle_div(div) {
+   var d = document.getElementById(div);
+  if(d.style.display && d.style.display == 'block') {
+        d.style.display="none";
+  }
+  else {
      d.style.display="block";
  }
-}
-
-function dwc_hide_extra() {
-   var d = document.getElementById('dwc_git_extra_div');
-   d.style.display="none";
-
+  
 }
 
 function dwc_branch(op) {

@@ -41,7 +41,11 @@ $lang['btn_fetch'] = 'Fetch';
 $lang['header_git_commit'] = 'Add and Commit local files';
 $lang['btn_commit'] = 'Commit';
 
-$lang['header_additional'] = 'Additional Git Options';
+$lang['header_additional'] = 'Advanced Git Options';
+$lang['sql_opts'] = 'Update/Create SQL Database';
+$lang['git_opts'] = 'Update Git';	
+$lang['git_advanced_opts'] = $lang['header_additional'] ;
+$lang['git_repos'] = 'Repos/Branches';
 
 $lang['header_git_pull'] = 'Update git (pull)';
 $lang['btn_pull'] = 'Pull';
@@ -49,7 +53,8 @@ $lang['btn_pull'] = 'Pull';
 $lang['header_git_status'] = 'Check current status of git';
 $lang['btn_status'] = 'Check';
 
-$lang['header_git_branch'] = 'Change branch';
-$lang['btn_branch'] = 'Branch';
-$lang['branch_names'] = 'Select Branch';
+$lang['btn_branch'] =  'Change branch'; //'Branch';
+$lang['branch_names'] = 'Select and Change Branch';
 
+$lang['btn_repos'] =  'Change Repo'; //'Branch';
+$lang['repo_names'] = 'Select and Change Repo';

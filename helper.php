@@ -9,9 +9,7 @@ if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 if(!defined('DW_COMMITS')) define('DW_COMMITS',DOKU_INC.'lib/plugins/dwcommits/');
 
-/**
- * This is the base class for all syntax classes, providing some general stuff
- */
+
 class helper_plugin_dwcommits extends DokuWiki_Plugin {
 
   private $path;
@@ -171,9 +169,14 @@ function populate($timestamp_start=0,$table='git_commits') {
               'Aug'=>8,'Sep'=>9,'Oct'=>10,'Nov'=>11,'Dec'=>12);
 
     $count = 0;
+    $start_number = 0;
     if(!$timestamp_start) {
        $timestamp_start = mktime(0,0,0,11,11,2010);
     }
+
+     $results = $this->sqlite->query("select count(*) from git_commits");  
+     $start_number = $this->sqlite->res2single($results);  
+
 
     $handle = popen("$this->git log", "r");
     $msg = "";
@@ -231,7 +234,10 @@ function populate($timestamp_start=0,$table='git_commits') {
         }
 
     pclose($handle);
+     $results = $this->sqlite->query("select count(*) from git_commits");  
+     $end_number = $this->sqlite->res2single($results);  
 
+    return array($end_number-$start_number, $end_number);
    
 }
 
