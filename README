@@ -1,14 +1,14 @@
 The plugin requires the sqlite plugin.  
+
 It also requires an intial git.
 
-It is a working version, but possibly useable.
+It goes into a file in the dokuwiki plugin directory named dwcommmits.
 
-In its current state it has an administrative panel which enables the user to create a database
-of commits from a git specified in a hard-coded path in helper.php, both in the function _getDB() 
-and in the constructor.  This will eventually be upgraded to something  more convenient.
+It is a development version, but in a condition to be used.
 
-In its present form it can be queried from the sqlite plugin admin panel.
+In its current state it has an administrative panel which enables the user to create  databases of commits from gits specified in the configuration manager and in a config file named default.local.ini, located in the conf directory.  This file contains an explanation of how to set up the configuration.  The gits must be fully readable by the web server, including the .git directory.
 
-The initial impetus behind this plugin is to help determine recent changes to Dokuwiki
-which might impact on plugin authors, so that they can get advance warning.
+In its present form the databases created by this plugin can be queried from the sqlite plugin admin panel.
+
+The initial impetus behind this plugin is to help determine recent changes to Dokuwiki which might impact on plugin authors.
 
