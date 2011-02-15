@@ -18,14 +18,67 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
   private $selected_branch;
   private $sqlite;
   private $git = '/usr/bin/git';
-    function __construct() {         
-        $this->path = DW_COMMITS . 'db/dokuwiki';
+  private $repros;
+  private $default_repro;
+  private $db_name;
+    function __construct() {      
+        if(isset($_REQUEST['dwc__repro']) && $_REQUEST['dwc__repro']) {
+             $this->path = $_REQUEST['dwc__repro'];
+        }
+        else {
+           $this->path = $this->get_conf_repro();
+        }
+        $this->default_repro = $this->path;  
         $this->status_message = array();
         $this->selected_branch="";
         $this->sqlite = 0;  
         $binary = $this->getConf('git_binary');
         if(isset($binary)) $this->git=$binary;
-        
+        $fname_hash = md5($this->path);
+        $names_fname = dirname(__FILE__).'/db/dbnames.ser'; 
+
+        if(file_exists($names_fname)) {
+            $inf_str = file_get_contents ($names_fname);
+            $inf = unserialize($inf_str);
+            if($inf[$fname_hash]) {
+                 $this->db_name=$inf[$fname_hash];
+            }
+            else {
+               $this->db_name=$this->new_dbname($fname_hash,$names_fname,$inf);
+            }
+        }
+        else {
+          $this->db_name=$this->new_dbname($fname_hash,$names_fname, false);
+        }
+
+    }
+
+    function new_dbname($fname_hash,$names_fname,$inf_array) {
+      
+       if($inf_array && $inf_array['count']) {
+          $count =  $inf_array['count'] + 1;
+       }
+       else {
+         $count = 1;   
+         $inf_array=array();       
+       }
+       $inf_array['count'] = $count;
+       $new_fname = 'dwcommits_' . $count; 
+       $inf_array[$fname_hash] = $new_fname;
+       $inf_array['git' . $count] = $this->path;
+       file_put_contents($names_fname, serialize($inf_array));       
+       return $new_fname ;
+      
+    }
+
+    function get_conf_repro(){
+            $repro = $this->getConf('default_git');
+            if(isset($repro) && $repro) {
+                  return $repro;
+            }
+            else {
+                return DW_COMMITS . 'db/dokuwiki';
+            }
     }
 
     /**
@@ -39,7 +92,8 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
                 msg('The data plugin needs the sqlite plugin', -1);
                 return false;
             }
-            if(!$db->init('dwcommits_2',dirname(__FILE__).'/db/')){
+          //  if(!$this->db_name)$this->db_name = 'dwcommits_tmp';
+            if(!$db->init($this->db_name,dirname(__FILE__).'/db/')){
                 return false;
             }             
             $db->fetchmode = DOKU_SQLITE_ASSOC;
@@ -101,6 +155,34 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
 
    }
 
+   function set_repros() {
+      $this->repros = array();
+      $this->repros[] = $this->html_option($this->path,true);
+      $conf_repro = $this->get_conf_repro();
+      if($this->path != $conf_repro) {
+             $this->repros[] = $this->html_option($conf_repro);
+      }
+      if(file_exists(DOKU_PLUGIN . 'dwcommits/conf/default.local.ini')) {  
+         $ini_array = parse_ini_file(DOKU_PLUGIN . 'dwcommits/conf/default.local.ini', true);  
+            foreach ($ini_array as $name=>$a) {
+                if($name == 'other_gits') {
+                    foreach($a as $git_dir) {
+                        $this->repros[] = $this->html_option($git_dir);
+                   }
+                }
+                if($name == 'dwc_gits') {
+                    foreach($a as $git_dir) {
+                        $this->repros[] = $this->html_option(DW_COMMITS_DB . $git_dir);
+                   }
+               }
+           }
+        }
+   }
+
+   function get_repros() {        
+      echo implode("\n",$this->repros);
+   }
+  
    function set_branches() {
        if(!$this->chdir()) return false;
        $this->branches = array();
@@ -109,13 +191,19 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
        foreach ($retv as $branch) {
         if(preg_match('/\*(.*)/',$branch,$matches)) {        
            $this->selected_branch = $matches[1]; 
-           $this->branches[] = '<option value="' .$matches[1] . '" selected>' . $matches[1] . '</option>';
+             $this->branches[] = $this->html_option($matches[1],true);  
         }
         else {
-            $this->branches[] = '<option value="'. $branch.'">' . $branch .'</option>';
+            $this->branches[] = $this->html_option($branch);           
         }
-       }
-        
+       }        
+   }
+
+   function html_option($val, $selected=false) {
+      if(!$selected) {
+        return '<option value="'. $val .'">' . $val .'</option>';
+      }
+      return '<option value="' .$val . '" selected>' . $val . '</option>';
    }
 
    function get_branches() {        
@@ -125,6 +213,11 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
    function selected_branch() {        
           if($this->selected_branch) return $this->selected_branch;
           return 'master';  
+   }
+
+  function selected_repro() {        
+          if(isset($_REQUEST['dwc__repro']) && $_REQUEST['dwc__repro']) return $_REQUEST['dwc__repro'];
+          return $this->default_repro;  
    }
 
   /*  Seems git status sometimes returns exit code of 1 event when 0 is expected 
@@ -143,7 +236,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
    function error($which) {
       $path = $this->path;
       $msgs = array(
-           "Cannot find cloned Dokuwiki at $path",
+           "Cannot find cloned git at $path",
            "Cannot access $path. The entire directory and all its contents must be read/write for the web server.",
            "Cannot fetch from github",
            "Unable to merge"
@@ -176,9 +269,11 @@ function populate($timestamp_start=0,$table='git_commits') {
 
      $results = $this->sqlite->query("select count(*) from git_commits");  
      $start_number = $this->sqlite->res2single($results);  
-
-
-    $handle = popen("$this->git log", "r");
+     $since =  date('Y-m-d',$timestamp_start);
+     if(!preg_match('/^\d\d\d\d-\d\d-\d\d$/',$since)) {
+          $since = '2010-11-11';
+     }
+    $handle = popen("$this->git log --since=$since", "r");
     $msg = "";
     $author="";
     $timestamp=0;

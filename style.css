@@ -5,9 +5,10 @@ div.dwc_msgarea {
 
 div.dwc_msgareatop, div.dwc_extratop {  font-weight:bold; padding-top: 1em; padding-bottom: 4px; }
 
-#dwc_git_extra_div,#dwc_repos_div,#dcw_update_git,#dcw_db_update { display: none; }
+#dwc_git_extra_div,#dwc_repos_div,#dcw_update_git,#dcw_db_update, #dwc_info_div { display: none; }
 
 div.dwc_box {
    border: 1px gray solid;   margin-bottom: 4px; padding: 1em;
 }
 
+#dwc_info_div { overflow: auto; margin: auto; width: 80%;  }

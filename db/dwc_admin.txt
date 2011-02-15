@@ -1,0 +1,22 @@
+===== Functions =====
+The navigation links at the top are toggles.  Clicking them opens the appropriate window, clicking a second time closes it.  the windows stay open until toggled shut.
+
+==== Update/Create SQL Database ====
+This window has two functions
+  - Initialize Sqlite Database
+  - Update Database
+Both of these take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  
+
+=====  Update Git =====
+This window is for updating the git.  You can check the current status of the git and pull in any new commits from gitHub.
+
+===== Advanced Git Options  =====
+These functions enable you to fetch new data from github, then to merge this data into your git.  These two steps are combined in the pull function of the **Update Git** window.  In this window, you can also commit files which you may have added locally and have not uploaded to gitHub.
+
+
+===== Repos/Branches =====
+In this window you can change the current git and switch to another branch of the current git.
+
+
+
+

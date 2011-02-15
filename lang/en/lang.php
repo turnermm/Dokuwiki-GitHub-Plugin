@@ -56,5 +56,8 @@ $lang['btn_status'] = 'Check';
 $lang['btn_branch'] =  'Change branch'; //'Branch';
 $lang['branch_names'] = 'Select and Change Branch';
 
-$lang['btn_repos'] =  'Change Repo'; //'Branch';
+$lang['btn_repos'] =  'Change Repo'; //'Repo';
 $lang['repo_names'] = 'Select and Change Repo';
+
+$lang['repro_switched'] = 'Repo changed to';
+$lang['git_info'] = 'Info';

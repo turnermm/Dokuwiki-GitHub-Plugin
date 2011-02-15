@@ -24,8 +24,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         $this->helper =& plugin_load('helper', 'dwcommits');        
         $this->db =  $this->helper->_getDB();
         $this->helper->set_branches();
-ini_set('display_errors',1);
-ini_set('error_reporting',E_ALL);
+        $this->helper->set_repros();
+//ini_set('display_errors',1);
+//ini_set('error_reporting',E_ALL);
 
     }
     /**
@@ -107,10 +108,13 @@ ini_set('error_reporting',E_ALL);
             else $status = $this->helper->get_status_msg();
             $this->output = $status; 
             break;
+        case 'repro':
+           $this->output = $this->getLang('repro_switched') . ':' . $_REQUEST['dwc__repro'];     
+           break; 
       }    
 
      
-    $this->submitted = true;  
+    $this->submitted = false; //'<pre>' . print_r($_REQUEST,1) . '</pre>';;  
     }
  
     /**
@@ -134,10 +138,9 @@ ini_set('error_reporting',E_ALL);
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dcw_update_git\'); void 0;">' . $this->getLang('git_opts') . '</a>');
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_git_extra_div\'); void 0;">' . $this->getLang('git_advanced_opts') . '</a>');
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_repos_div\'); void 0;">' . $this->getLang('git_repos') . '</a>');
+      ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_info(\'dwc_info_div\'); void 0;">' . $this->getLang('git_info') . '</a>');
       ptln('</table>');
-      ptln('</DIV>');  
-
-
+      ptln('</DIV>');        
       /*  Form  */
       ptln('<form action="'.wl($ID).'" method="post">');
       
@@ -145,6 +148,7 @@ ini_set('error_reporting',E_ALL);
       ptln('  <input type="hidden" name="do"   value="admin" />');
       ptln('  <input type="hidden" name="page" value="'.$this->getPluginName().'" />');
       ptln('  <input type="hidden" name="dwc__branch" id="dwc__branch" value="'.  $this->helper->selected_branch() .'" />');
+      ptln('  <input type="hidden" name="dwc__repro" id="dwc__repro" value="'. $this->helper->selected_repro()   .'" />');
      
      /* Initialize Sqlite Database */
       ptln('<DIV id="dcw_db_update" class="dwc_box">');
@@ -221,10 +225,10 @@ ini_set('error_reporting',E_ALL);
       ptln('<td>&nbsp;&nbsp;&nbsp;'); // spacer
 
       /*Repos */
-      ptln('<td align="left"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_repos').'" />');
+      ptln('<td align="left"><input type="submit" name="cmd[repro]"  value="'.$this->getLang('btn_repos').'" />');
 
-      ptln('<td>&nbsp;<Select onchange="dwc_branch(this)">');
-      $this->helper->get_branches();
+      ptln('<td>&nbsp;<Select onchange="dwc_repro(this)">');
+      $this->helper->get_repros();
       ptln('</Select>'); 
       ptln('</table>');
 
@@ -232,16 +236,21 @@ ini_set('error_reporting',E_ALL);
    
       ptln('</form>');
 
+       ptln('<DIV class="dwc_box" id="dwc_info_div">');
+       echo $this->locale_xhtml('dwc_admin');
+       ptln('</DIV>');
+
    /* Message Area */
-      ptln('<br /><div class="dwc_msgareatop">');     
+      ptln('<br /><div class="dwc_msgareatop" id="dwc_msgareatop">');     
       ptln('Message Area');
       ptln('</div>');
-      ptln('<div class="dwc_msgarea">');     
+      ptln('<div class="dwc_msgarea" id="dwc_msgarea">');     
       ptln('<p>'.$this->output.'</p>');
       ptln('</div>');
      
        if($this->submitted) {
-          //ptln("<p>submitted</p>");
+            ptln($this->submitted);
+//          ptln("<p>submitted</p>");
        }
 
     }
