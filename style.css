@@ -1,14 +1,31 @@
 div.dwc_msgarea { 
-    padding: 1em; width: 60%; height: 8em;
-    overflow:auto; border: 1px black solid;   
+    padding: 1em; width: 80%; height: 12em;
+    overflow:auto; border: 1px black solid;  
+     margin: auto;
  }
 
-div.dwc_msgareatop, div.dwc_extratop {  font-weight:bold; padding-top: 1em; padding-bottom: 4px; }
+div.dwc_msgareatop, div.dwc_advancedtop {  font-weight:bold; padding-top: 1px; padding-bottom: 4px; }
+div.dwc_msgareatop { text-align: center; }
 
-#dwc_git_extra_div,#dwc_repos_div,#dcw_update_git,#dcw_db_update, #dwc_info_div { display: none; }
+#dwc_git_advanced,#dwc_repos_div,#dcw_update_git,#dcw_db_update, #dwc_info_div, #dwc_query_div { display: none; }
 
 div.dwc_box {
    border: 1px gray solid;   margin-bottom: 4px; padding: 1em;
 }
 
 #dwc_info_div { overflow: auto; margin: auto; width: 80%;  }
+table.dwc_dbq td { padding: 2px; }
+/* #DEE7EC; */
+input[type='submit'] {
+ 
+   padding-left: 5px;
+   padding-right: 5px;
+   padding-top: 1px;
+   font-size: 8pt; 
+   border: 1px solid #8CACBB;
+   background:  #fff url(images/buttonshadow.png) repeat-x bottom;
+   background-color: white;
+}
+div.dwc_help_btn, div.closer { text-align: right;  padding-right: 150px; }
+div.closer { padding-bottom: 1em; }
+span.dwc_hilite { background-color: yellow; font-weight: bold; }

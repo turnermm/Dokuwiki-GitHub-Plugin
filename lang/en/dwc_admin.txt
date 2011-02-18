@@ -1,22 +1,52 @@
-===== Functions =====
-The navigation links at the top are toggles.  Clicking them opens the appropriate window, clicking a second time closes it.  the windows stay open until toggled shut.
+===== Navigation =====
+~~CLOSE~~
 
-==== Update/Create SQL Database ====
-This window has two functions
-  - Initialize Sqlite Database
-  - Update Database
-Both of these take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  
+The navigation links in the Navigation Bar at the top are toggles.  Clicking them opens the appropriate window, clicking a second time closes it. The windows stay open until toggled shut.
+
+The **Help** links at the top of the function windows are also toggles and link to the relevant sections of this page.
+
+Whether you open this window from the navigation bar or from the function window, you can always close it by clicking on either **Help** link
+
+The **Close All** link in the Navigation Bar will close all windows but the Message Area.
+
+===== Update/Create SQL Database =====
+~~CLOSE~~
+This window has three functions
+
+    - Initialize Sqlite Database
+    - Update Database
+    - Set URL of Remote Repository
+
+Both of the firs tow take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  When you start your database for the first time, the database structure is already set up and you can select either Update Database or Initialize Sqlite Database.  But after your database contains data, you will want to use Update.
+
+
+The URL of the Remote Repository is needed to create links to the commits on the gitHub (or any git) web site.  Normally, dwcommits can retrieve the URL from the local git repository when you click on the "Get Remote URL" button.  To save the URL, click on the "Save Remote URL"button.
+
+
+If the URL appears in the text box, then the URL has already been saved. You can, however, edit it this URL at any time and re-save it.
 
 =====  Update Git =====
+~~CLOSE~~
 This window is for updating the git.  You can check the current status of the git and pull in any new commits from gitHub.
 
 ===== Advanced Git Options  =====
-These functions enable you to fetch new data from github, then to merge this data into your git.  These two steps are combined in the pull function of the **Update Git** window.  In this window, you can also commit files which you may have added locally and have not uploaded to gitHub.
+~~CLOSE~~
+These functions enable you to fetch new data from github, then to merge this data into your git. These two steps are combined in the pull function of the **Update Git** window. In this window, you can also add and commit files which you may have added locally and have not uploaded to gitHub.
 
 
 ===== Repos/Branches =====
+~~CLOSE~~
+
 In this window you can change the current git and switch to another branch of the current git.
 
 
+===== Query =====
+~~CLOSE~~
+
+There are six fields: Term 1, Term 2, Author, Branch, Start Date, End Date. 
 
 
+You can search for Term 1, for Term 1 AND/OR Term 2, for  Author, AND/Or  Author. You can restrict your search to the selected Branch and to commits made after Start Date, before End Date,  or between Start Date and End Date.   You can select any one or combination of these six fields. 
+
+
+The Term and Author search is   "fuzzy" and case insensitive.  If you are looking for an author named ''John Jackson'', you can enter simply ''jack'' in the Author field.

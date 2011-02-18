@@ -29,6 +29,12 @@ $lang['explain_update'] = 'This function will add commits to the Sqlite database
                           '  beginning at the Year, month, and day entered below. ' .
                           ' It will not overwrite previously entered data.';
 
+$lang['header_remote_url'] = 'Set URL of Remote Repository';
+$lang['explain_remote_url'] = 'You can either set it manually or let dwcommit set it for you. If already set, it will appear in the text-box.';
+$lang['btn_remote_url'] = 'Get Remote URL';
+$lang['btn_set_remote'] = "Set Remote URL";
+$lang['remote_url_text'] = "Remote URL";
+
 $lang['header_git'] = 'Update Git';
 $lang['explain_git'] = 'These functions can be used to bring your Git up-to-date';
 
@@ -38,8 +44,11 @@ $lang['btn_merge'] = 'Merge';
 $lang['header_git_fetch'] = 'Fetch remote commits';
 $lang['btn_fetch'] = 'Fetch';
 
-$lang['header_git_commit'] = 'Add and Commit local files';
+$lang['header_git_commit'] = 'Commit local files';
 $lang['btn_commit'] = 'Commit';
+$lang['header_git_add'] = 'Add local files';
+$lang['btn_add'] = 'Add';
+
 
 $lang['header_additional'] = 'Advanced Git Options';
 $lang['sql_opts'] = 'Update/Create SQL Database';
@@ -60,4 +69,21 @@ $lang['btn_repos'] =  'Change Repo'; //'Repo';
 $lang['repo_names'] = 'Select and Change Repo';
 
 $lang['repro_switched'] = 'Repo changed to';
-$lang['git_info'] = 'Info';
+$lang['git_info'] = 'Help';
+$lang['header_git_query'] = 'Database Queries';
+$lang['git_query'] = 'Query';
+$lang['header_git_MsgArea'] = 'Message Area';
+$lang['btn_msg_small'] = 'Smaller';
+$lang['btn_msg_big'] = 'Bigger';
+$lang['btn_close_all'] = 'Close All';
+$lang['current_db'] = 'Current Database: ';
+
+$lang['q_srch_term'] = 'Search Term';
+$lang['q_srch_type'] = 'Search Type';
+$lang['q_author'] = 'Author';
+$lang['q_branch'] = 'Branch';
+$lang['q_start_date'] = 'Start Date';
+$lang['q_end_date'] = 'End Date';
+$lang['q_submit'] = 'Submit Query';
+$lang['q_date_fmt'] = 'Date Format';
+
