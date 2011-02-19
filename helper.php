@@ -344,7 +344,8 @@ function populate($timestamp_start=0,$table='git_commits') {
     }
 
      $results = $this->sqlite->query("select count(*) from git_commits");  
-     $start_number = $this->sqlite->res2single($results);  
+  //   $start_number = $this->sqlite->res2single($results);  
+   $start_number = $this->res2single($results);  
      $since =  date('Y-m-d',$timestamp_start);
      if(!preg_match('/^\d\d\d\d-\d\d-\d\d$/',$since)) {
           $since = '2010-11-11';
@@ -406,7 +407,8 @@ function populate($timestamp_start=0,$table='git_commits') {
 
      pclose($handle);
      $results = $this->sqlite->query("select count(*) from git_commits");  
-     $end_number = $this->sqlite->res2single($results);  
+//     $end_number = $this->sqlite->res2single($results);  
+      $end_number = $this->res2single($results);  
 
      return array($end_number-$start_number, $end_number);
    
@@ -631,6 +633,15 @@ function populate($timestamp_start=0,$table='git_commits') {
 
       return mktime (0,0,0, $month, $day, $year);
    }
+
+   function res2single($res) {
+        if(method_exists($this->sqlite,res2single)){
+            return $this->sqlite->res2single($res);
+        }
+        $arr = $this->sqlite->res2row($res);
+        list($key,$val) = each($arr);
+        return($val);
+}
 
   function recreate_table($timestamp_start) {
 

@@ -6,9 +6,9 @@ It goes into a file in the dokuwiki plugin directory named dwcommmits.
 
 It is a development version, but in a condition to be used.
 
-In its current state it has an administrative panel which enables the user to create  databases of commits from gits specified in the configuration manager and in a config file named default.local.ini, located in the conf directory.  This file contains an explanation of how to set up the configuration.  The gits must be fully readable by the web server, including the .git directory.
+In its current state it has an administrative panel which enables the user to create databases of commits from gits specified in the configuration manager and in a config file named default.local.ini, located in the conf directory.  This file contains an explanation of how to set up the configuration.  The gits must be fully readable by the web server, including the .git directory.
 
-In its present form the databases created by this plugin can be queried from the sqlite plugin admin panel.
+In its present form the databases created by this plugin can be queried from the admin panel. The eventual plan is to create a syntax module which will enable the output to be updated with each refreshing of the wiki page. Currently the output is in a modified plain text form (i.e. not in a table) but tables will also eventually be implemented.
 
 The initial impetus behind this plugin is to help determine recent changes to Dokuwiki which might impact on plugin authors.
 
