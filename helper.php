@@ -8,7 +8,7 @@ if(!defined('DOKU_INC')) die();
 
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 if(!defined('DW_COMMITS')) define('DW_COMMITS',DOKU_INC.'lib/plugins/dwcommits/');
-
+global $dwc_dbg_log;
 
 class helper_plugin_dwcommits extends DokuWiki_Plugin {
 
@@ -25,6 +25,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
   private $commit_url;
 
     function __construct() {      
+        global $dwc_dbg_log;
         if(isset($_REQUEST['dwc__repro']) && $_REQUEST['dwc__repro']) {
              $this->path = $_REQUEST['dwc__repro'];
         }
@@ -54,7 +55,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
         else {
           $this->db_name=$this->new_dbname($fname_hash,$names_fname, false);
         }
-         
+        $dwc_dbg_log  =  DW_COMMITS . 'dwc_debug.log';
     }
 
     function new_dbname($fname_hash,$names_fname,$inf_array) {
@@ -75,8 +76,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
       
     }
 
-    function save_dbnames_ser($fname,$content) {
-      // return file_put_contents($names_fname, $content);   
+    function save_dbnames_ser($fname,$content) {      
        if(function_exists(io_saveFile)){
           return io_saveFile($fname,$content);
        }
@@ -334,7 +334,7 @@ function populate($timestamp_start=0,$table='git_commits') {
    
      if(!$this->chdir()) return false;
 
-     $months = array('Jan'=>1,'Feb'=>3,'Mar'=>3,'Apr'=>4,'May'=>5,'Jun'=>6,'Jul'=>7,
+     $months = array('Jan'=>1,'Feb'=>2,'Mar'=>3,'Apr'=>4,'May'=>5,'Jun'=>6,'Jul'=>7,
               'Aug'=>8,'Sep'=>9,'Oct'=>10,'Nov'=>11,'Dec'=>12);
 
     $count = 0;
@@ -371,8 +371,8 @@ function populate($timestamp_start=0,$table='git_commits') {
 
                  case 'Date':
                      preg_match('/(\w+)\s+(\d+)\s+(\d+):(\d+):(\d+)\s+(\d+)/',$matches[2],$date_matches);
-                     list($dstr,$mon,$day,$hour,$min,$sec,$year) = $date_matches;                 
-                     $timestamp = mktime ($hour,$min,$sec, $months[$mon], $day, $year);                                  
+                     list($dstr,$mon,$day,$hour,$min,$sec,$year) = $date_matches;                                     
+                     $timestamp = mktime ($hour,$min,$sec, $months[$mon], $day, $year);           
                      $count++ ;                     
                      if($timestamp < $timestamp_start) {
                        $done = true;
@@ -407,8 +407,7 @@ function populate($timestamp_start=0,$table='git_commits') {
 
      pclose($handle);
      $results = $this->sqlite->query("select count(*) from git_commits");  
-//     $end_number = $this->sqlite->res2single($results);  
-      $end_number = $this->res2single($results);  
+     $end_number = $this->res2single($results);  
 
      return array($end_number-$start_number, $end_number);
    
@@ -453,7 +452,7 @@ function populate($timestamp_start=0,$table='git_commits') {
                case 'terms_1':
                   $term1 = $this->construct_term('msg',$val);
                   break;
-               case 'terms_1':
+               case 'terms_2':
                  $term2 = $this->construct_term('msg',$val);
                  break;
                case 'd1':
@@ -466,7 +465,7 @@ function populate($timestamp_start=0,$table='git_commits') {
              }
         }
     
-        $msg = $this->construct_msg_clause($term1,$terms2,$query['OP_1']);  
+        $msg = $this->construct_msg_clause($term1,$term2,$query['OP_1']);  
         $ab_clause = $this->construct_ab_clause($author,$branch,$query['OP_2'],$msg);  
         $attach = ($ab_clause || $msg) ? true : false;
         $date_clause = $this->construct_date_clause($date_1,$date_2,$attach);
@@ -476,9 +475,10 @@ function populate($timestamp_start=0,$table='git_commits') {
           $this->error(4);
           return false;
         }
-
+ 
         $arr = $this->sqlite->res2arr($res);
-        return $arr;
+
+        return array($arr,  $q);
      
   }
 
@@ -514,10 +514,6 @@ function populate($timestamp_start=0,$table='git_commits') {
            $output .= "\n---------\n";
         }
 
-        if(!file_put_contents('dwc_search.txt',print_r($_REQUEST['dwc_query'],true) . "\n" .
-            $regex . "\n"
-          )) $this->error(5);
-
         return '<pre>' . $output . '</pre>';       
   }
 
@@ -533,7 +529,7 @@ function populate($timestamp_start=0,$table='git_commits') {
                     $val = preg_replace($regex,"<span class='dwc_hilite'>$1</span>",$val); 
                 }
             }
-            elseif($col == 'timestamp') {
+            elseif($col == 'timestamp') {               
                 $result .= "<b>Date: </b>";
                 $val = date("D M d H:i:s Y" ,$val);
             }
@@ -575,7 +571,7 @@ function populate($timestamp_start=0,$table='git_commits') {
      $q = "";
      $op  = $attach ? 'AND' : "";
      if($d1 && $d2) {
-       $q = " $op ( timestamp > $d1 && timestamp < $d2 )";    
+       $q = " $op ( timestamp > $d1 AND timestamp < $d2 )";    
      }
      elseif($d1) {
         $q = " $op timestamp > $d1 ";    
@@ -653,6 +649,19 @@ function populate($timestamp_start=0,$table='git_commits') {
      return $res;
  
   }
+
+    function write_debug($data) {
+      return;
+      global $dwc_dbg_log;
+      static $handle;
+      if(!$handle) {
+      if(!$handle = fopen($dwc_dbg_log, 'a')) {
+        return;
+        }
+      }
+       if(is_array($data)) $data = print_r($data,true); 
+       fwrite($handle, "$data\n");
+    }
 }
 
 

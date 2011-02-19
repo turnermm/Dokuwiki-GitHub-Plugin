@@ -11,26 +11,32 @@ The **Close All** link in the Navigation Bar will close all windows but the Mess
 
 ===== Update/Create SQL Database =====
 ~~CLOSE~~
+
 This window has three functions
 
     - Initialize Sqlite Database
     - Update Database
     - Set URL of Remote Repository
 
-Both of the firs tow take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  When you start your database for the first time, the database structure is already set up and you can select either Update Database or Initialize Sqlite Database.  But after your database contains data, you will want to use Update.
+Both of the first two take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  When you start your database for the first time, the database structure is already set up and you can select either Update Database or Initialize Sqlite Database.  But after your database contains data, you will want to use Update.
+
+===== Update Git =====
 
 
-The URL of the Remote Repository is needed to create links to the commits on the gitHub (or any git) web site.  Normally, dwcommits can retrieve the URL from the local git repository when you click on the "Get Remote URL" button.  To save the URL, click on the "Save Remote URL"button.
+~~CLOSE~~
+
+
+This window is for updating the git.  You can check the current status of the git and pull in any new commits from gitHub.
+
+
+The URL of the Remote Repository is needed to create links to the commits on the gitHub (or any git) web site.  Normally, dwcommits can retrieve the URL from the local git repository when you click on the "Get Remote URL " button.  To save the URL, click on the "Save Remote URL "button. 
 
 
 If the URL appears in the text box, then the URL has already been saved. You can, however, edit it this URL at any time and re-save it.
 
-=====  Update Git =====
-~~CLOSE~~
-This window is for updating the git.  You can check the current status of the git and pull in any new commits from gitHub.
-
 ===== Advanced Git Options  =====
 ~~CLOSE~~
+
 These functions enable you to fetch new data from github, then to merge this data into your git. These two steps are combined in the pull function of the **Update Git** window. In this window, you can also add and commit files which you may have added locally and have not uploaded to gitHub.
 
 

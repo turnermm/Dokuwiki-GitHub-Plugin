@@ -125,9 +125,10 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
            $this->output = $this->getLang('repro_switched') . ':' . $_REQUEST['dwc__repro'];     
            break; 
         case 'query':
-            $arr = $this->helper->select_all(); 
+            list($arr,$q) = $this->helper->select_all(); 
             if($arr) {
-               $this->output = $this->helper->format_result_plain($arr);
+               $this->output = "<b>$q</b><br />";
+               $this->output .= $this->helper->format_result_plain($arr);
             }
            break;
         case 'set_remote_url':
@@ -140,7 +141,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
     $this->current_page = $dwc_Divs[key($_REQUEST['cmd'])];
 
   $this->submitted = "";
-  // $this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
+   $this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
 
     }
  
@@ -201,19 +202,14 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln($this->getLang('input_day').'&nbsp;&nbsp;(dd):  <input type="text" name="dup[day]" size="2" value="' . $day .'" />&nbsp;&nbsp;');        
       ptln('&nbsp;&nbsp;<input type="submit" name="cmd[update]"  value="'.$this->getLang('btn_update').'" />');
 
-     /* Get and Set Remote URL */
-      ptln('<br /><br /><b>' . $this->getLang('header_remote_url')  .'</b><br />');
-      ptln($this->getLang('explain_remote_url') . '<br />');
-      ptln('&nbsp;&nbsp;<input type="submit" name="cmd[remote_url]"  value="'.$this->getLang('btn_remote_url').'" />');
-      ptln('&nbsp;&nbsp;' . $this->getLang('remote_url_text') 
-           . '&nbsp;<input type="text" name="remote_url_name" size="80"  value="'
-           . $this->helper->get_remote_url() .'" />');
-      ptln('&nbsp;&nbsp;<input type="submit" name="cmd[set_remote_url]"  value="'.$this->getLang('btn_set_remote').'" />');
-
       ptln('</DIV>');
 
      /* Update git */
       ptln('<DIV id="dcw_update_git" class="dwc_box">'); 
+      ptln('<DIV CLASS="dwc_help_btn">');
+      ptln('<a href="javascript:dwc_help(\'update_git\'); void 0;">');
+      ptln($this->getLang('git_info') .' </a></DIV>');
+
       ptln('<b>'. $this->getLang('header_git') . '</b>');
       ptln('<br /><TABLE cellspacing="4">');      
       ptln('<tr><td colspan="5">' . $this->getLang('explain_git') . '</td>');
@@ -225,6 +221,16 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('<td>&nbsp;&nbsp;<input type="submit" name="cmd[pull]"  value="'.$this->getLang('btn_pull').'" /></td>');
       ptln('<td>' . $this->getLang('header_git_pull') . '</td>');
       ptln('</table>');
+
+     /* Get and Set Remote URL */
+      ptln('<b>' . $this->getLang('header_remote_url')  .'</b><br />');
+      ptln($this->getLang('explain_remote_url') . '<br />');
+      ptln('&nbsp;&nbsp;<input type="submit" name="cmd[remote_url]"  value="'.$this->getLang('btn_remote_url').'" />');
+      ptln('&nbsp;&nbsp;' . $this->getLang('remote_url_text') 
+           . '&nbsp;<input type="text" name="remote_url_name" size="80"  value="'
+           . $this->helper->get_remote_url() .'" />');
+      ptln('&nbsp;&nbsp;<input type="submit" name="cmd[set_remote_url]"  value="'.$this->getLang('btn_set_remote').'" />');
+
       ptln('</DIV>');
 
      /* Advanced Git Options */
