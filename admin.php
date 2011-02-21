@@ -127,8 +127,13 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         case 'query':
             list($arr,$q) = $this->helper->select_all(); 
             if($arr) {
-               $this->output = "<b>$q</b><br />";
-               $this->output .= $this->helper->format_result_plain($arr);
+                 $this->output = "<b>$q</b><br />";
+                if($_REQUEST['output_type'] == 'plain') {
+                 $this->output .= $this->helper->format_result_plain($arr);
+                }
+                else {
+                   $this->output .= $this->helper->format_result_table($arr);
+                }
             }
            break;
         case 'set_remote_url':
@@ -141,8 +146,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
     $this->current_page = $dwc_Divs[key($_REQUEST['cmd'])];
 
   $this->submitted = "";
-   $this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
-
+   //$this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
     }
  
     /**
@@ -185,7 +189,10 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
 
       ptln('<DIV CLASS="dwc_help_btn">');
       ptln('<a href="javascript:dwc_help(\'updatecreate_sql_database\'); void 0;">');
-      ptln($this->getLang('git_info') .' </a></DIV>');
+      ptln($this->getLang('git_info') .' </a>');
+      ptln('<a href="javascript:dwc_toggle_div(\'dcw_db_update\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+     
+      ptln('</DIV>');
       
       ptln('<b>' . $this->getLang('header_init') .'</b><br />');
       ptln($this->getLang('explain_init') . '<br />');
@@ -208,7 +215,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('<DIV id="dcw_update_git" class="dwc_box">'); 
       ptln('<DIV CLASS="dwc_help_btn">');
       ptln('<a href="javascript:dwc_help(\'update_git\'); void 0;">');
-      ptln($this->getLang('git_info') .' </a></DIV>');
+      ptln($this->getLang('git_info') .' </a>');
+      ptln('<a href="javascript:dwc_toggle_div(\'dcw_update_git\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+      ptln('</DIV>');
 
       ptln('<b>'. $this->getLang('header_git') . '</b>');
       ptln('<br /><TABLE cellspacing="4">');      
@@ -235,6 +244,10 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
 
      /* Advanced Git Options */
       ptln('<DIV class="dwc_box" id="dwc_git_advanced">');
+      ptln('<DIV CLASS="dwc_help_btn">');
+      ptln('<a href="javascript:dwc_toggle_div(\'dwc_git_advanced\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+      ptln('</DIV>');
+
       ptln('<DIV class="dwc_advancedtop" id="dwc_advancedtop">');
       ptln($this->getLang('header_additional'));  
       ptln('</DIV>');
@@ -263,6 +276,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('</DIV>');   
 
       ptln('<DIV class="dwc_box" id="dwc_repos_div">');
+      ptln('<DIV CLASS="dwc_help_btn">');
+      ptln('<a href="javascript:dwc_toggle_div(\'dwc_repos_div\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+      ptln('</DIV>');
 
       /* Branches and Repos*/
       ptln('<TABLE cellspacing="4" border="0">');
@@ -297,7 +313,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
 
        ptln('<DIV CLASS="dwc_help_btn">');
        ptln('<a href="javascript:dwc_help(\'query\'); void 0;">');
-       ptln($this->getLang('git_info') .' </a></DIV>');
+       ptln($this->getLang('git_info') .' </a>');
+       ptln('<a href="javascript:dwc_toggle_div(\'dwc_query_div\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+       ptln('</DIV>');
 
        ptln('<div class="dwc_msgareatop">');
        ptln($this->getLang('header_git_query'). '<br >');
@@ -322,7 +340,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
        ptln('<TD>&nbsp;&nbsp;' . $this->getLang('q_end_date') .' <input type="text" value="" name="dwc_query[d2]"></TD>');
        ptln('<TD>&nbsp;&nbsp;' . $this->getLang('q_date_fmt') . '&nbsp;&nbsp;MM-DD-YYYY</TD>');      
 
-       ptln('<TR><TD COLSPAN="3" ALIGN="RIGHT">&nbsp;&nbsp;<input type="submit" value = "Submit query" name="cmd[query]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>');
+       ptln('<TR><TD>' .$this->getLang('q_output') . ':&nbsp;&nbsp;<input type ="radio" name="output_type" checked value="table">' . $this->getLang('q_table'));
+       ptln('&nbsp;&nbsp;<input type ="radio" name="output_type" value="plain">' . $this->getLang('q_plain'));
+       ptln('<TD COLSPAN="2" ALIGN="RIGHT">&nbsp;&nbsp;<input type="submit" value = "Submit query" name="cmd[query]">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>');
 
        ptln('</TABLE>');
        ptln('</DIV>');
@@ -339,7 +359,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
        ptln('Remote Url: ' . $this->helper->get_remote_url() . '<br>'); 
        ptln('</DIV>');
        $help_file = $this->locale_xhtml('dwc_admin');
-       $help_file = preg_replace('/~~CLOSE~~/ms','<DIV class="closer"><a href="javascript:dwc_toggle_info(\'dwc_info_div\'); void 0;">close</a></DIV>',$help_file); 
+       $help_file = preg_replace('/~~CLOSE~~/ms','<DIV class="closer"><a href="javascript:dwc_toggle_info(\'dwc_info_div\'); void 0;">' . $this->getLang('div_close') .'</a></DIV>',$help_file); 
        echo $help_file;
        //echo $this->locale_xhtml('dwc_admin');
        ptln('</DIV>');
@@ -362,7 +382,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('</DIV>');
      
        if($this->submitted) {
-         //  ptln($this->submitted);
+        //   ptln($this->submitted);
        }
      ptln('<script language="javascript">');
      ptln('dwc_toggle_div("' . $this->current_page . '");');

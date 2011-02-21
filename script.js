@@ -63,6 +63,7 @@ function dwc_close_all() {
    the hash position relevant to the displayed div
 */
 function dwc_help(infoid) {
+
   var state = dwc_toggle_div("dwc_info_div");
   if(state == 'none')dwc_toggle_div("dwc_info_div");
   location = '#'+ infoid; 

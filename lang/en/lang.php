@@ -86,4 +86,8 @@ $lang['q_start_date'] = 'Start Date';
 $lang['q_end_date'] = 'End Date';
 $lang['q_submit'] = 'Submit Query';
 $lang['q_date_fmt'] = 'Date Format';
+$lang['q_output'] = 'Output';
+$lang['q_table'] = 'Table';
+$lang['q_plain'] = 'Plain text';
+$lang['div_close'] = 'Close';
 

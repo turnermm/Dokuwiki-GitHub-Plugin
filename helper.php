@@ -509,6 +509,7 @@ function populate($timestamp_start=0,$table='git_commits') {
 
         $this->set_commit_url();
         $query = $q ? $q: $_REQUEST['dwc_query'];
+
         $regex = $this->get_hilite_regex($query);  
 
         $output = "";
@@ -530,7 +531,7 @@ function populate($timestamp_start=0,$table='git_commits') {
         foreach ($row as $col=>$val) {
             
             
-            if($col == 'msg'){                
+            if($col == 'msg'){                                               
                 $msg = hsc($val);       
                 if($regex) {        
                     $msg = preg_replace($regex,"<span class='dwc_hilite'>$1</span>",$val); 
@@ -603,7 +604,8 @@ function populate($timestamp_start=0,$table='git_commits') {
         foreach ($row as $col=>$val) {
             
             
-            if($col == 'msg'){                
+            if($col == 'msg'){  
+                $val = wordwrap($val, 80,"\n");              
                 $val = hsc($val);       
                 if($regex) {        
                     $val = preg_replace($regex,"<span class='dwc_hilite'>$1</span>",$val); 
