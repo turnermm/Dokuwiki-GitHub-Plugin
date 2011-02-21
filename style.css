@@ -28,4 +28,8 @@ input[type='submit'] {
 }
 div.dwc_help_btn, div.closer { text-align: right;  padding-right: 150px; }
 div.closer { padding-bottom: 1em; }
-span.dwc_hilite { background-color: yellow; font-weight: bold; }
+span.dwc_hilite {
+   background-color:yellow;
+   font-weight: bold;
+}
+/* #FEF89E;*/

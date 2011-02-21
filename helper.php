@@ -56,6 +56,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
           $this->db_name=$this->new_dbname($fname_hash,$names_fname, false);
         }
         $dwc_dbg_log  =  DW_COMMITS . 'dwc_debug.log';
+
     }
 
     function new_dbname($fname_hash,$names_fname,$inf_array) {
@@ -113,6 +114,24 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
     function current_dbname() {
       return $this->db_name;
     }
+
+   /* must be called from syntax.php before _getDB() */
+    function setup_syntax($name) {
+        $this->db_name = $name;
+        $names_fname = dirname(__FILE__).'/db/dbnames.ser'; 
+        $inf_str = file_get_contents ($names_fname);
+        $inf = unserialize($inf_str);
+        if(!$inf) return;
+       
+        list($base,$count) = explode('_',$this->db_name);
+        $slot = 'url'.$count; 
+        if($inf[$slot]) {
+             $this->remote_url = $inf[$slot]; 
+       }
+       else $this->remote_url = "";
+       return $this->remote_url . " slot=$slot";
+    }
+
 
     function get_conf_repro(){
             $repro = $this->getConf('default_git');
@@ -198,12 +217,16 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
         }
        elseif($which == 'remote_url') {
              exec("$this->git  config --get remote.origin.url",$retv, $exit_code);   
-             foreach($retv as $item) {
-                if(preg_match('/^\s*http.*/', $item)) {
-                      $this->remote_url =$item;
-                      break;
-                }
+             $this->remote_url = $retv[0];           
+             $this->remote_url = preg_replace('/:(?!\/)/',"/",$this->remote_url);
+             $this->remote_url = preg_replace('/^\s*.*?@/',"",$this->remote_url);
+             if(!preg_match('/http/',$this->remote_url)) {
+                   if(preg_match('/github/',$this->remote_url)) {
+                     $this->remote_url = 'https://'. $this->remote_url;  
+                   }
+                   else $this->remote_url = 'http://'. $this->remote_url;  
              }
+
              $this->status_message = array_merge(array(getcwd(),"git checkout $branch", $status),$this->status_message,$retv);        
              if($this->remote_url) { 
                 $this->status_message[] = "Remote URL: $this->remote_url";
@@ -344,7 +367,7 @@ function populate($timestamp_start=0,$table='git_commits') {
     }
 
      $results = $this->sqlite->query("select count(*) from git_commits");  
-  //   $start_number = $this->sqlite->res2single($results);  
+  
    $start_number = $this->res2single($results);  
      $since =  date('Y-m-d',$timestamp_start);
      if(!preg_match('/^\d\d\d\d-\d\d-\d\d$/',$since)) {
@@ -428,9 +451,9 @@ function populate($timestamp_start=0,$table='git_commits') {
     }
    
 
-  function select_all() {
+  function select_all($q=array()) {
         $temp_str = "";
-        $query = $_REQUEST['dwc_query'];
+        $query = count($q) ? $q: $_REQUEST['dwc_query'];
         $msg = "";
         $author = "";
         $branch = "";
@@ -482,42 +505,99 @@ function populate($timestamp_start=0,$table='git_commits') {
      
   }
 
+  function format_result_table($arr, $q=false) {
 
-  function format_result_table($arr) {
+        $this->set_commit_url();
+        $query = $q ? $q: $_REQUEST['dwc_query'];
+        $regex = $this->get_hilite_regex($query);  
+
         $output = "";
         foreach($arr as $row) {
-           $output .= $this->format_row($row);  
-           $output .= "\n\n";
+           $output .= $this->format_tablerow($row,$regex);  
+           $output .= "<tr><td colspan='3' style='border-bottom: 1px solid black;'>\n";
         }
-        return '<pre>' . $output . '</pre>';       
+        return '<table width="85%" cellspacing="4">' . $output . '</table>';       
   }
 
-  function format_result_plain($arr) {
-        $this->set_commit_url();
-        $query = $_REQUEST['dwc_query'];
+ function format_tablerow($row,$regex) {
+        $result = ""; 
 
+        $msg = "";        
+        $date = "";
+        $commit = "";
+        $branch = "";
+        $author = "";
+        foreach ($row as $col=>$val) {
+            
+            
+            if($col == 'msg'){                
+                $msg = hsc($val);       
+                if($regex) {        
+                    $msg = preg_replace($regex,"<span class='dwc_hilite'>$1</span>",$val); 
+                }
+                   
+            }
+            elseif($col == 'timestamp') {               
+               
+                $date = date("D M d H:i:s Y" ,$val);
+            }
+            elseif($col == 'gitid') {
+                if($this->commit_url) {
+                 // $result .= 'Commit (URL): '; 
+                  $commit = $this->format_commit_url($val);                
+                }
+                else $commit = $val;           
+            }
+            elseif($col == 'gitbranch') {
+                $branch = $val;
+            }
+           elseif($col == 'author') {
+                list($name,$email) = explode('<',$val);
+                $email = trim($email,'>');
+                $author = "<a href ='mailto: $email' title='$email'>$name</a>";
+            }
+               
+           
+        }
+
+        return "<tr><td rowspan='2'><td nowrap style='padding-right:2px;'>$date</td><td><b>Commit:&nbsp;&nbsp;</b> $commit</td>" .
+              "<tr><td rowspan = '2' valign='top' style='padding-right:2px;'><b>Author:&nbsp;&nbsp;</b>$author<br /><b>Branch:&nbsp;&nbsp;</b>$branch</td>" .
+               "<td style='padding:2px;'>$msg</td>"; 
+
+              
+  }
+   
+ 
+ function get_hilite_regex($query) {
         $term1 = $query['terms_1'];
         $term2 = $query['terms_2'];
+       
         $regex = "";
 
         if($term1 && $term2) {
-           $regex = "/($term1|$term2)/ims";       
+              $regex = "/($term1|$term2)/ims";       
         }
         elseif($term1) {
-            $regex = "/($term1)/ims";       
+             $regex = "/($term1)/ims";       
         }
- 
+       return $regex;
+ }
+  function format_result_plain($arr, $q=false) {
+        $this->set_commit_url();
+        $query = $q ? $q: $_REQUEST['dwc_query'];
+
+        $regex = $this->get_hilite_regex($query);  
 
         $output = "";
         foreach($arr as $row) {
-           $output .= $this->format_row($row,$regex,$replace);  
+           $output .= $this->format_row($row,$regex);  
            $output .= "\n---------\n";
         }
 
         return '<pre>' . $output . '</pre>';       
   }
 
-  function format_row($row,$regex,$replace) {
+  function format_row($row,$regex) {
         $result = ""; 
         
         foreach ($row as $col=>$val) {

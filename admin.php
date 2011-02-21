@@ -68,9 +68,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
      $nov_11 = mktime(0,0,0,11,11,2010);  
 
     $dwc_Divs = array(
-        'init'=>"dcw_db_update",'update'=>"dcw_db_update",'remote_url'=>"dcw_db_update",
+        'init'=>"dcw_db_update",'update'=>"dcw_db_update",
         'fetch'=>"dwc_git_advanced",'merge'=>"dwc_git_advanced",'commit'=>"dwc_git_advanced",'add'=>"dwc_git_advanced",
-        'status'=>"dcw_update_git", 'pull'=>"dcw_update_git",
+        'status'=>"dcw_update_git", 'pull'=>"dcw_update_git",'remote_url'=>"dcw_update_git",
         'branch'=>"dwc_repos_div",'repro'=>"dwc_repos_div",
         'info'=>"dwc_info_div",
         'query'=>"dwc_query_div"
