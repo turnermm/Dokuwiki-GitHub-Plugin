@@ -12,9 +12,6 @@ if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
 if(!defined('DW_COMMITS')) define('DW_COMMITS',DOKU_INC.'lib/plugins/dwcommits/');
-//@touch (DOKU_INC .'inc/parser/xhtml.php');
-//@touch(DOKU_INC .'conf/local.php');
-
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
