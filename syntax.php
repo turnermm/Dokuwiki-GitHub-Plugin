@@ -140,6 +140,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
                         $field =  'd2';
             	        break;
             	case 'BRANCH':
+                         $field = 'branch';
             	        break;
            }
                 if($val) $result[$field]=$val;

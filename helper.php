@@ -330,7 +330,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
 
    }
   
-   function error($which) {
+   function error($which, $type=-1) {
       $path = $this->path;
       $msgs = array(
            "Cannot find cloned git at $path",
@@ -338,9 +338,11 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
            "Cannot fetch from github",
            "Unable to merge",
            "Bad Query Construct. Please notify the plugin author.",
-           "Unable to write to dbnames.ser file."  
+           "Unable to write to dbnames.ser file.",
+           "Please check your query. You seem not to have entered any search terms."
       );
-      msg($msgs[$which],-1);
+      
+      msg($msgs[$which],$type);
      
    }
    function get_status_msg() {
@@ -492,7 +494,11 @@ function populate($timestamp_start=0,$table='git_commits') {
         $ab_clause = $this->construct_ab_clause($author,$branch,$query['OP_2'],$msg);  
         $attach = ($ab_clause || $msg) ? true : false;
         $date_clause = $this->construct_date_clause($date_1,$date_2,$attach);
-        $q = $msg . $ab_clause . $date_clause;       
+        $q = $msg . $ab_clause . $date_clause;    
+        if(!$q) {         
+         $this->error(6,1);
+         return array();
+        }
         $res = $this->sqlite->query("SELECT timestamp,author,msg,gitid,gitbranch FROM git_commits WHERE $q");
         if(!$res) {
           $this->error(4);
@@ -733,7 +739,7 @@ function populate($timestamp_start=0,$table='git_commits') {
   }
 
     function write_debug($data) {
-      return;
+   //   return;
       global $dwc_dbg_log;
       static $handle;
       if(!$handle) {
