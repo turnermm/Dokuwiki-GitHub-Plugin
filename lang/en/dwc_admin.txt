@@ -34,6 +34,19 @@ The URL of the Remote Repository is needed to create links to the commits on the
 
 If the URL appears in the text box, then the URL has already been saved. You can, however, edit it this URL at any time and re-save it.
 
+==== Web Server Access ====
+To  be able to update a git from the web browser, you may have to create a separate ssh key for the web server. To do this, you will very likely need root access.  The procedure is as follows:
+
+     sudo -u apache  ssh-keygen -t rsa -C your_email@whatever.org
+     
+You will be asked where to store you ssh key files.  On linux servers, this defaults to /var/www, which is the "home" directory for apache.  Once you have done this, you can then clone repositories as the web server.  For instance:
+
+       sudo -u apache  git clone git@github.com:turnermm/fckgLite
+       
+With this in  place you can use the "pull" function in the admin panel.   Otherwise, you may have to update your gits from the command line, using your own identity.  However, you must give the web server read/write access to the local repository nevertheless.
+      
+  
+
 ===== Advanced Git Options  =====
 ~~CLOSE~~
 
