@@ -499,7 +499,7 @@ function populate($timestamp_start=0,$table='git_commits') {
          $this->error(6,1);
          return array();
         }
-        $res = $this->sqlite->query("SELECT timestamp,author,msg,gitid,gitbranch FROM git_commits WHERE $q");
+        $res = $this->sqlite->query("SELECT timestamp,author,msg,gitid,gitbranch FROM git_commits WHERE $q ORDER BY timestamp DESC");
         if(!$res) {
           $this->error(4);
           return false;
