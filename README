@@ -14,6 +14,8 @@ The databases created by this plugin can be queried from the admin panel and
 from a syntax plugin. The HOW-TO is described on the DOkuwiki site for this
 plugin: http://www.dokuwiki.org/plugin:dwcommits 
 
+Please read the documentation in the admin panel or on the plugin web site
+concerning web server access.
 
 The initial impetus behind this plugin is to help determine recent changes to
 Dokuwiki which might impact on plugin authors.
