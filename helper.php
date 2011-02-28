@@ -733,13 +733,13 @@ function populate($timestamp_start=0,$table='git_commits') {
      $this->sqlite->query('CREATE TABLE git_commits(author TEXT,timestamp INTEGER,gitid TEXT,msg TEXT, prefix TEXT, gitbranch TEXT, PRIMARY KEY(prefix,timestamp))');     
      $this->populate($timestamp_start);
      $results = $this->sqlite->query("select count(*) from git_commits");  
-     $res = $this->sqlite->res2single($results);  
+     $res = $this->res2single($results);  
      return $res;
  
   }
 
     function write_debug($data) {
-   //   return;
+      return;
       global $dwc_dbg_log;
       static $handle;
       if(!$handle) {
