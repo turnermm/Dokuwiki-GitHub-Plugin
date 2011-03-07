@@ -1,4 +1,4 @@
-var dwc__Divs = new Array("dwc_git_advanced","dwc_repos_div","dcw_update_git","dcw_db_update","dwc_info_div","dwc_query_div");
+var dwc__Divs = new Array("dwc_git_advanced","dwc_repos_div","dcw_update_git","dcw_db_update","dwc_info_div","dwc_query_div","dwc_prune_div");
 
 
 function dwc_toggle_div(div) {

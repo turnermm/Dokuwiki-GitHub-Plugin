@@ -231,8 +231,7 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
              if($this->remote_url) { 
                 $this->status_message[] = "Remote URL: $this->remote_url";
              }
-       }
-
+       } 
             if($exit_code > 0) return false;             
             return true;
 
@@ -333,13 +332,14 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
    function error($which, $type=-1) {
       $path = $this->path;
       $msgs = array(
-           "Cannot find cloned git at $path",
-           "Cannot access $path. The entire directory and all its contents must be read/write for the web server.",
-           "Cannot fetch from github",
-           "Unable to merge",
-           "Bad Query Construct. Please notify the plugin author.",
-           "Unable to write to dbnames.ser file.",
-           "Please check your query. You seem not to have entered any search terms."
+           "Cannot find cloned git at $path",  // 0
+           "Cannot access $path. The entire directory and all its contents must be read/write for the web server.", // 1
+           "Cannot fetch from github",  // 2
+           "Unable to merge",  // 3
+           "Bad Query Construct. Please notify the plugin author.",  // 4
+           "Unable to write to dbnames.ser file.",  // 5
+           "Please check your query. You seem not to have entered any search terms.", // 6
+           "Unable to restore backup; you may not have a backup saved." // 7
       );
       
       msg($msgs[$which],$type);
@@ -534,6 +534,7 @@ function populate($timestamp_start=0,$table='git_commits') {
         $commit = "";
         $branch = "";
         $author = "";
+        global $conf; 
         foreach ($row as $col=>$val) {
             
             
@@ -544,13 +545,11 @@ function populate($timestamp_start=0,$table='git_commits') {
                 }
                    
             }
-            elseif($col == 'timestamp') {               
-               
+            elseif($col == 'timestamp') {  
                 $date = date("D M d H:i:s Y" ,$val);
             }
             elseif($col == 'gitid') {
-                if($this->commit_url) {
-                 // $result .= 'Commit (URL): '; 
+                if($this->commit_url) {                 
                   $commit = $this->format_commit_url($val);                
                 }
                 else $commit = $val;           
@@ -726,6 +725,112 @@ function populate($timestamp_start=0,$table='git_commits') {
         list($key,$val) = each($arr);
         return($val);
 }
+
+function restore_backup() {
+   $names_fname = dirname(__FILE__).'/db/dbnames.ser'; 
+   $backup = $names_fname . '.prev';
+   if(!file_exists($names_fname)) {
+      return "backup file not found";
+   }
+   if(file_exists($names_fname) && file_exists($backup)) {
+          @unlink($names_fname);
+  }         
+  else {
+         $this->error(7);
+         return; 
+  }
+  if(rename($backup,$names_fname)) {
+       return "Backup restored";
+   }
+
+  $this->error(7);
+   return "";
+}
+
+function prune($del) {
+   $names_fname = dirname(__FILE__).'/db/dbnames.ser'; 
+   $msg = "";
+   $meta = DOKU_INC . 'data/meta/';
+   if(file_exists($names_fname)) {
+        $inf_str = file_get_contents ($names_fname);
+        $inf = unserialize($inf_str);
+        if(!$inf) return;           
+        foreach($_REQUEST[prune] as $db=>$key) {
+           unset($inf[$key]);  
+           list($prefix,$index) = explode('_',$db);
+           $url = 'url' . $index;
+           $git = 'git' . $index;
+           if(isset($inf[$url])) {
+              unset($inf[$url]);
+           }
+           if(isset($inf[$git])) {
+              unset($inf[$git]);
+           }
+
+           $sql = $meta . $db . '.sqlite';
+           if($del && file_exists($sql)) {
+             if(!unlink($sql)) {
+                $msg .= "Could not delete $sql<br />";
+               
+             }
+           }  else $msg .= "Could not delete $sql; it was not found on the server.<br />";
+        }
+
+       $backup = $names_fname . '.prev';
+       if(file_exists($backup)) {
+           @unlink($backup);
+       }         
+       if(rename($names_fname, $backup)) {
+          $msg .= "Old data saved in backup $backup";
+          if($del) {
+            $msg .= "<br />This backup may contain references to deleted sqlite dbase files<br />";
+          }
+       }
+       $this->save_dbnames_ser($names_fname,serialize($inf));
+   }
+ 
+  return $msg;
+}
+
+/* Read dbnames.ser and return data found there */
+function db_data($inf = false) {
+     $output = "";
+     $filename = DW_COMMITS . 'db/dbnames.ser';
+     if(!$inf) {
+        $inf_str = file_get_contents ($filename);
+        $inf = unserialize($inf_str);     
+     }
+
+    foreach($inf as $val=>$entry) {     
+       if(preg_match('/dwcommits_(\d+)/',$entry, $matches)) {                         
+           $output .= "<b>" . $this->getLang('db_file'). "</b> $entry";
+           $output .= '&nbsp;&nbsp;&nbsp;<input type = "checkbox" value = "'. $val. '" name="prune[' .$entry. ']">';
+           $output .= "<br />";
+           if(($url = $this->dwc_element('url', $matches[1], $inf))!== false) {
+               $output .= "<b>" . $this->getLang('remote_url'). "</b> $url<br />";
+           }
+        
+           $git = $this->dwc_element('git', $matches[1], $inf);
+           if($git !== false) {
+             if(!file_exists($git)) {
+                $output .= "<b>". $this->getLang('git_missing'). "</b>  $git<br />";
+             }
+             else $output .= "<b>". $this->getLang('git_local'). "</b> $git<br />";
+           }
+          $output .= "<br />";
+       }
+    }
+    return $output;
+ }
+ 
+ function dwc_element($prefix, $suffix, $ar) {
+    $inx = $prefix . $suffix;
+    if(isset($ar[$inx])) {
+         return $ar[$inx];
+    }
+    return false;
+       
+ }
 
   function recreate_table($timestamp_start) {
 

@@ -28,7 +28,9 @@ $lang['explain_init'] = 'Year, month, and day from which to initialize. With eac
 $lang['explain_update'] = 'This function will add commits to the Sqlite database'.
                           '  beginning at the Year, month, and day entered below. ' .
                           ' It will not overwrite previously entered data.';
-
+//$lang['btn_dbinfo'] = 'DB Info';
+//$lang['header_dbinfo'] = 'All registered databases and associated info: ';
+$lang['maintenance'] = 'Maintenance';
 $lang['header_remote_url'] = 'Set URL of Remote Repository';
 $lang['explain_remote_url'] = 'You can either set it manually or let dwcommit set it for you. If already set, it will appear in the text-box.';
 $lang['btn_remote_url'] = 'Get Remote URL';
@@ -64,7 +66,6 @@ $lang['btn_status'] = 'Check';
 
 $lang['btn_branch'] =  'Change branch'; //'Branch';
 $lang['branch_names'] = 'Select and Change Branch';
-
 $lang['btn_repos'] =  'Change Repo'; //'Repo';
 $lang['repo_names'] = 'Select and Change Repo';
 
@@ -91,3 +92,10 @@ $lang['q_table'] = 'Table';
 $lang['q_plain'] = 'Plain text';
 $lang['div_close'] = 'Close';
 
+$lang['prune'] = 'Prune Entries';
+$lang['prune_del'] = 'Delete Entries';
+$lang['prune_restore'] = 'Restore Backup';
+$lang['db_file'] = 'Database File:';
+$lang['git_local'] = "Local Git: ";
+$lang['git_missing'] = "Local Git Missing: ";
+$lang['remote_url'] = 'Remote URL: ';

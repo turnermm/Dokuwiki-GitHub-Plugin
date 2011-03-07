@@ -73,7 +73,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
         'status'=>"dcw_update_git", 'pull'=>"dcw_update_git",'remote_url'=>"dcw_update_git",
         'branch'=>"dwc_repos_div",'repro'=>"dwc_repos_div",
         'info'=>"dwc_info_div",
-        'query'=>"dwc_query_div"
+        'query'=>"dwc_query_div",
+        'prune' =>"dwc_prune_div", 'restore'=>"dwc_prune_div",'prune_del'=>"dwc_prune_div"    
     );
 
      if (!is_array($_REQUEST['cmd'])) return;
@@ -136,17 +137,25 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
                 }
             }
            break;
-        case 'set_remote_url':
-            
+        case 'set_remote_url':            
            $this->output = $this->helper->set_githubURL($_REQUEST['remote_url_name']); 
            break;
+        case 'prune': 
+              $this->output = $this->helper->prune(false);
+            break;
+        case 'prune_del':        
+              $this->output = $this->helper->prune(true);
+          break;
+        case 'restore':        
+              $this->output = $this->helper->restore_backup();
+          break;
 
       }    
 
     $this->current_page = $dwc_Divs[key($_REQUEST['cmd'])];
 
   $this->submitted = "";
-   //$this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
+  $this->submitted = $this->current_page . '<br />' . key($_REQUEST['cmd'])  . '<pre>' . print_r($_REQUEST,1) . '</pre>';  
     }
  
     /**
@@ -171,6 +180,8 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_git_advanced\'); void 0;">' . $this->getLang('git_advanced_opts') . '</a>');
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_repos_div\'); void 0;">' . $this->getLang('git_repos') . '</a>');
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_query_div\'); void 0;">' . $this->getLang('git_query') . '</a>');
+      ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_div(\'dwc_prune_div\'); void 0;">' . $this->getLang('maintenance') . '</a>');
+
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_toggle_info(\'dwc_info_div\'); void 0;">' . $this->getLang('git_info') . '</a>');
       ptln('<td>&nbsp;&nbsp;<a href="javascript:dwc_close_all(); void 0;">' . $this->getLang('btn_close_all') . '</a>');
       ptln('</table>');
@@ -347,7 +358,18 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
        ptln('</TABLE>');
        ptln('</DIV>');
    
-      ptln('</form>');
+       ptln('<DIV class="dwc_box" id="dwc_prune_div">');   
+       ptln('<DIV CLASS="dwc_help_btn">');
+       ptln('<a href="javascript:dwc_help(\'maintenance\'); void 0;">');
+       ptln($this->getLang('git_info') .' </a>');
+       ptln('<a href="javascript:dwc_toggle_div(\'dwc_prune_div\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
+       ptln('</DIV>');     
+       echo  $this->helper->db_data();      
+       ptln('<br /><input type="submit" value = "' . $this->getLang('prune') . '" name="cmd[prune]">');
+       ptln('&nbsp;&nbsp;&nbsp;<input type="submit" value = "' . $this->getLang('prune_del') . '" name="cmd[prune_del]">');
+       ptln('&nbsp;&nbsp;&nbsp;<input type="submit" value = "' . $this->getLang('prune_restore') . '" name="cmd[restore]">');
+       ptln('</DIV>');
+       ptln('</form>');
 
 
      /* Info Div */
@@ -360,8 +382,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
        ptln('</DIV>');
        $help_file = $this->locale_xhtml('dwc_admin');
        $help_file = preg_replace('/~~CLOSE~~/ms','<DIV class="closer"><a href="javascript:dwc_toggle_info(\'dwc_info_div\'); void 0;">' . $this->getLang('div_close') .'</a></DIV>',$help_file); 
-       echo $help_file;
-       //echo $this->locale_xhtml('dwc_admin');
+       echo $help_file;      
        ptln('</DIV>');
 
    /* Message Area */

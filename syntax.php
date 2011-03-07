@@ -49,6 +49,8 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
 
     function connectTo($mode) {
       $this->Lexer->addEntryPattern('~~DWCOMMITS.*?',$mode,'plugin_dwcommits'); 
+      $this->Lexer->addSpecialPattern('{{dwcommits_INF}}',$mode,'plugin_dwcommits');
+
     }
     function postConnect() { $this->Lexer->addExitPattern('DWCOMMITS~~','plugin_dwcommits'); }
 
@@ -68,7 +70,13 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
                     return array($state, $match);
           case DOKU_LEXER_EXIT :
                     return array($state, '');
+
+         case DOKU_LEXER_SPECIAL :
+               $this->db_data();
+               return array($state,'');
+
         }
+
         return array();
     }
 
@@ -79,6 +87,10 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
         if($mode == 'xhtml'){
             list($state,$match) = $data;
             switch ($state) {
+               case DOKU_LEXER_SPECIAL:
+                  $renderer->doc .= '<p><pre>' . $this->output . '</pre></p>'; break;
+                   break;
+
               case DOKU_LEXER_ENTER :      
                 $renderer->doc .= "<p>"; break;
                 break;
@@ -96,7 +108,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
 
 
    function parse_match($match) {
-      
+      $this->output = "";
       $result = array();
       $matches = explode("\n", trim($match)); 
       foreach($matches as $entry)  {
@@ -147,7 +159,6 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
            list($arr,$q) = $this->helper->select_all($result); 
            if($arr) {
                $this->output = "<b>Query: $q</b><br />";
-              // $this->output .= $this->helper->format_result_plain($arr,$result);
                $this->output .=  $this->helper->format_result_table($arr,$result);
                return true;
            }
@@ -157,5 +168,45 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
 
     
    }
+
+
+function db_data() {
+     $this->output = "";
+     $filename = DW_COMMITS . 'db/dbnames.ser';
+
+     $inf_str = file_get_contents ($filename);
+     $inf = unserialize($inf_str);     
+     
+    foreach($inf as $val=>$entry) {     
+       if(preg_match('/dwcommits_(\d+)/',$entry, $matches)) {                
+           $this->output .= "<b>Database File:</b> $entry\n";
+           if(($url = $this->dwc_element('url', $matches[1], $inf))!== false) {
+               $this->output .= "<b>Remote URL:</b> $url\n";
+           }
+        
+           $git = $this->dwc_element('git', $matches[1], $inf);
+           if($git !== false) {
+             if(!file_exists($git)) {
+                $this->output .= "<b>Local Git Missing:</b>  $git\n";
+             }
+             else $this->output .= "<b>Local Git:</b> $git\n";
+             
+           }
+          $this->output .= "\n";
+       }
+    }
+   
+ }
+ 
+ function dwc_element($prefix, $suffix, $ar) {
+    $inx = $prefix . $suffix;
+    if(isset($ar[$inx])) {
+         return $ar[$inx];
+    }
+    return false;
+       
+ }
+
+
 }
 ?>

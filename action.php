@@ -22,7 +22,7 @@ class action_plugin_dwcommits extends DokuWiki_Action_Plugin {
     /**
      * Hook js script into page headers.
      *
-     * @author Samuele Tognini <samuele@cli.di.unipi.it>
+     * @author Myron Turner <turnermm02@shaw.ca>
      */
     function touch_cache(&$event, $param) {
      global $ID;

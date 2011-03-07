@@ -1,24 +1,35 @@
 ===== Navigation =====
+
+
 ~~CLOSE~~
+
 
 The navigation links in the Navigation Bar at the top are toggles.  Clicking them opens the appropriate window, clicking a second time closes it. The windows stay open until toggled shut.
 
+
 The **Help** links at the top of the function windows are also toggles and link to the relevant sections of this page.
+
 
 Whether you open this window from the navigation bar or from the function window, you can always close it by clicking on either **Help** link
 
-The **Close All** link in the Navigation Bar will close all windows but the Message Area.
 
+The **Close All** link in the Navigation Bar will close all windows but the Message Area.
 ===== Update/Create SQL Database =====
+
+
 ~~CLOSE~~
+
 
 This window has three functions
 
+
     - Initialize Sqlite Database
     - Update Database
-    - Set URL of Remote Repository
+    - Set  URL of Remote Repository
+
 
 Both of the first two take dates from which the updating or DB creation starts.  Initializing deletes all the data and starts all over again at the  new date.  Updating inserts new data into the database starting at the specified date.  When you start your database for the first time, the database structure is already set up and you can select either Update Database or Initialize Sqlite Database.  But after your database contains data, you will want to use Update.
+
 
 ===== Update Git =====
 
@@ -29,43 +40,85 @@ Both of the first two take dates from which the updating or DB creation starts. 
 This window is for updating the git.  You can check the current status of the git and pull in any new commits from gitHub.
 
 
-The URL of the Remote Repository is needed to create links to the commits on the gitHub (or any git) web site.  Normally, dwcommits can retrieve the URL from the local git repository when you click on the "Get Remote URL " button.  To save the URL, click on the "Save Remote URL "button. 
+The URL of the Remote Repository is needed to create links to the commits on the gitHub (or any git) web site.  Normally, dwcommits can retrieve the URL from the local git repository when you click on the "Get Remote URL " button.  To save the URL, click on the "Save Remote URL "button.
 
 
 If the URL appears in the text box, then the URL has already been saved. You can, however, edit it this URL at any time and re-save it.
 
+
 ==== Web Server Access ====
+
+
 To  be able to update a git from the web browser, you may have to create a separate ssh key for the web server. To do this, you will very likely need root access.  The procedure is as follows:
 
-     sudo -u apache  ssh-keygen -t rsa -C your_email@whatever.org
-     
+
+<code>
+   sudo -u apache  ssh-keygen -t rsa -C your_email@whatever.org
+</code>
+
+
 You will be asked where to store you ssh key files.  On linux servers, this defaults to /var/www, which is the "home" directory for apache.  Once you have done this, you can then clone repositories as the web server.  For instance:
 
-       sudo -u apache  git clone git@github.com:turnermm/fckgLite
-       
-With this in  place you can use the "pull" function in the admin panel.   Otherwise, you may have to update your gits from the command line, using your own identity.  However, you must give the web server read/write access to the local repository nevertheless.
-      
-  
 
-===== Advanced Git Options  =====
+<code>
+     sudo -u apache  git clone git@github.com:turnermm/fckgLite
+</code>
+
+
+With this in  place you can use the "pull" function in the admin panel.   Otherwise, you may have to update your gits from the command line, using your own identity.  However, you must give the web server read/write access to the local repository nevertheless.
+
+
+===== Advanced Git Options =====
+
+
 ~~CLOSE~~
 
-These functions enable you to fetch new data from github, then to merge this data into your git. These two steps are combined in the pull function of the **Update Git** window. In this window, you can also add and commit files which you may have added locally and have not uploaded to gitHub.
+
+These functions enable you to fetch new data from github, then to merge this data into your git. These two steps are combined in the pull function of the **Update Git**  window. In this window, you can also add and commit files which you may have added locally and have not uploaded to gitHub.
 
 
 ===== Repos/Branches =====
+
+
 ~~CLOSE~~
+
 
 In this window you can change the current git and switch to another branch of the current git.
 
 
 ===== Query =====
+
+
 ~~CLOSE~~
 
-There are six fields: Term 1, Term 2, Author, Branch, Start Date, End Date. 
+
+There are six fields: Term 1, Term 2, Author, Branch, Start Date, End Date.
 
 
-You can search for Term 1, for Term 1 AND/OR Term 2, for  Author, AND/Or  Author. You can restrict your search to the selected Branch and to commits made after Start Date, before End Date,  or between Start Date and End Date.   You can select any one or combination of these six fields. 
+You can search for Term 1, for Term 1 AND/OR Term 2, for  Author, AND/Or  Author. You can restrict your search to the selected Branch and to commits made after Start Date, before End Date,  or between Start Date and End Date.   You can select any one or combination of these six fields.
 
 
-The Term and Author search is   "fuzzy" and case insensitive.  If you are looking for an author named ''John Jackson'', you can enter simply ''jack'' in the Author field.
+The Term and Author search is   "fuzzy" and case insensitive.  If you are looking for an author named ''John Jackson'', you can enter simply ''jack''  in the Author field.
+
+
+===== Maintenance =====
+
+
+~~CLOSE~~
+
+
+The maintenance panel enables deletion of unused database items.   There are three submit options:
+
+
+    - Prune Entries
+    - Delete Entries
+    - and Restore Backup
+
+
+Clicking on Prune Entries will delete the entry for this git from the dwcommits records, which are kept in db/dbnames.ser.  Clicking Delete Entries will delete the dwcommit record from db/dbnames.ser and also delete the sqlite database file for this entry, which is kept in data/meta.  The sqlite dtabase files all have this format: dwcommits_<n>.sqlite, where <n> is the number of its record in db/dbnames.ser.
+
+
+The last option is Restore Backup.  Whenever you delete or prune an item, the maintenance software saves a backup file of the previous record set, which is saved in db/dbnames.ser.prev.  If you decide to go back to the previous set of records, then you can click on this button; it cannot, however, restore any sqlite database files which  you have deleted.  So, if you use Delete Entries and then Restore Backup, you will have to recreate your sqlite database.
+
+
+The Restore Backup is simply a temporary band-aid, primarily useful during the current session, in case you to make an error.  If you add a new entry to dbnames.ser and then restore the old backup, the new record will be lost.

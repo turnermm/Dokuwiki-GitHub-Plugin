@@ -7,7 +7,7 @@ div.dwc_msgarea {
 div.dwc_msgareatop, div.dwc_advancedtop {  font-weight:bold; padding-top: 1px; padding-bottom: 4px; }
 div.dwc_msgareatop { text-align: center; }
 
-#dwc_git_advanced,#dwc_repos_div,#dcw_update_git,#dcw_db_update, #dwc_info_div, #dwc_query_div { display: none; }
+#dwc_git_advanced,#dwc_repos_div,#dcw_update_git,#dcw_db_update, #dwc_info_div, #dwc_query_div, #dwc_prune_div { display: none; }
 
 div.dwc_box {
    border: 1px gray solid;   margin-bottom: 4px; padding: 1em;
