@@ -99,3 +99,4 @@ $lang['db_file'] = 'Database File:';
 $lang['git_local'] = "Local Git: ";
 $lang['git_missing'] = "Local Git Missing: ";
 $lang['remote_url'] = 'Remote URL: ';
+$lang['explain_maint'] ="Check for either pruning or deletion";

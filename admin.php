@@ -364,6 +364,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
        ptln($this->getLang('git_info') .' </a>');
        ptln('<a href="javascript:dwc_toggle_div(\'dwc_prune_div\'); void 0;">' . $this->getLang('div_close') .' </a>' ); 
        ptln('</DIV>');     
+       ptln('<b>' .$this->getLang('explain_maint') . '</b><br /><br />');
        echo  $this->helper->db_data();      
        ptln('<br /><input type="submit" value = "' . $this->getLang('prune') . '" name="cmd[prune]">');
        ptln('&nbsp;&nbsp;&nbsp;<input type="submit" value = "' . $this->getLang('prune_del') . '" name="cmd[prune_del]">');
