@@ -773,7 +773,7 @@ function prune($del) {
                 $msg .= "Could not delete $sql<br />";
                
              }
-           }  else $msg .= "Could not delete $sql; it was not found on the server.<br />";
+           }  
         }
 
        $backup = $names_fname . '.prev';
