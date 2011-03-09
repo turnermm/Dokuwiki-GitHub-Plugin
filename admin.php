@@ -293,26 +293,28 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
 
       /* Branches and Repos*/
       ptln('<TABLE cellspacing="4" border="0">');
-      ptln('<tr><td colspan="5" align="right">');
-      ptln($this->getLang('current_db') . $this->helper->current_dbname() . '<tr><td colspan="5">&nbsp;');
+      ptln('<tr><td colspan="2" align="right">');
+
+         /* Current Sqlite DB Name */
+      ptln($this->getLang('current_db') . $this->helper->current_dbname());
+      ptln('<tr><td colspan="2">&nbsp;'); //Row spacer
      
-      ptln('<tr><th align="center" colspan="2">' . $this->getLang('branch_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
-      ptln('<td>&nbsp;&nbsp;&nbsp;'); // spacer
-      ptln('<th align="center" colspan="2">' . $this->getLang('repo_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
-
-      ptln('<tr><td align="left"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_branch').'" />');
-      ptln('<td>&nbsp;<Select onchange="dwc_branch(this)">');
-      $this->helper->get_branches();
-      ptln('</Select>');
-
-      ptln('<td>&nbsp;&nbsp;&nbsp;'); // spacer
-
       /*Repos */
-      ptln('<td align="left"><input type="submit" name="cmd[repro]"  value="'.$this->getLang('btn_repos').'" />');
-
+      ptln('<tr><th align="center" colspan="2">' . $this->getLang('repo_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
+      ptln('<tr><td align="left"><input type="submit" name="cmd[repro]"  value="'.$this->getLang('btn_repos').'" />');
       ptln('<td>&nbsp;<Select onchange="dwc_repro(this)">');
       $this->helper->get_repros();
       ptln('</Select>'); 
+
+      ptln('<tr><td colspan="2">&nbsp;'); //Row spacer
+
+      /*Branches */
+      ptln('<tr><th align="center" colspan="2">' . $this->getLang('branch_names') . '&nbsp;&nbsp;&nbsp;</th>'  );
+      ptln('<tr><td align="left"><input type="submit" name="cmd[branch]"  value="'.$this->getLang('btn_branch').'" />');
+      ptln('<td>&nbsp;<Select onchange="dwc_branch(this)">');
+      $this->helper->get_branches();
+      ptln('</Select>');    
+
       ptln('</table>');
 
       ptln('</DIV>');   
