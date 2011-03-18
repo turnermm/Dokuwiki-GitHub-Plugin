@@ -31,13 +31,14 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
      * return some info
      */
     function getInfo(){
+       
         return array(
             'author' => 'Myron Turner',
             'email'  => 'turnermm02@shaw.ca',
             'date'   => '20011-02-19',
             'name'   => 'dwcommits Syntax Plugin',
             'desc'   => 'Output git database query',
-            'url'    =>  '',
+            'url'    =>  'http://www.dokuwiki.org/plugin:dwcommits',
         );
     }
 
@@ -118,6 +119,10 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
            if(preg_match('/^\s*#/',$field)) continue;
            switch($field) {
             	case 'DATABASE':   
+                      /*
+                       This call to setup_syntax() will give,for instance:
+                       https://github.com/turnermm/fckgLite slot=url2
+                      */
                       $remote_url = $this->helper->setup_syntax($val);
                       $remote_url .= " db=" . $val;
                        $val = "";                       
@@ -132,7 +137,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
 
             	        break;
             	case 'TERM_2':
-                        $field = 'terms_1'; 
+                        $field = 'terms_2'; 
 
             	        break;
             	case 'AND_OR_AUTHOR':
@@ -159,7 +164,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
            list($arr,$q) = $this->helper->select_all($result); 
            if($arr) {
                $this->output = "<b>Query: $q</b><br />";
-               $this->output .=  $this->helper->format_result_table($arr,$result);
+               $this->output .=  $this->helper->format_result_table($arr,$result);          
                return true;
            }
 
