@@ -125,10 +125,10 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
            //path switched in helper constructor
            $this->output = $this->getLang('repro_switched') . ':' . $_REQUEST['dwc__repro'];     
            break; 
-        case 'query':
+        case 'query':            
             list($arr,$q) = $this->helper->select_all(); 
-            if($arr) {
-                 $this->output = "<b>$q</b><br />";
+            $this->output = "<b>$q</b><br />";  
+            if($arr) {                
                 if($_REQUEST['output_type'] == 'plain') {
                  $this->output .= $this->helper->format_result_plain($arr);
                 }
@@ -136,6 +136,7 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
                    $this->output .= $this->helper->format_result_table($arr);
                 }
             }
+            else $this->output .= "no result";
            break;
         case 'set_remote_url':            
            $this->output = $this->helper->set_githubURL($_REQUEST['remote_url_name']); 
