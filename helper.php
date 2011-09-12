@@ -695,7 +695,7 @@ function populate($timestamp_start=0,$table='git_commits') {
         if(!$phrase1) return "";
         if(!$phrase2) return $phrase1; 
         $OP = ($op == 'AND') ? ' AND ' : ' OR ';  
-        return " ($phrase1) $OP ($phrase1) ";
+        return " ($phrase1) $OP ($phrase2) ";
   }
 
   function get_timestamp($dstr) {
