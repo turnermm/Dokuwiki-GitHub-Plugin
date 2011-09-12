@@ -150,7 +150,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
             	case 'DATE_1':
                         $field = 'd1';
             	        break;
-            	case 'DATE_1':
+            	case 'DATE_2':
                         $field =  'd2';
             	        break;
             	case 'BRANCH':
