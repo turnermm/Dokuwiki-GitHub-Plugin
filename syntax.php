@@ -86,6 +86,7 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
      */
     function render($mode, &$renderer, $data) {
         if($mode == 'xhtml'){
+            $this->expire_cache();
             list($state,$match) = $data;
             switch ($state) {
                case DOKU_LEXER_SPECIAL:
@@ -107,6 +108,13 @@ class syntax_plugin_dwcommits extends DokuWiki_Syntax_Plugin {
         return false;
     }
 
+   function expire_cache() {
+        global $ID; 
+        $data = array('cache' => 'expire');  // the metadata being added
+        $render = false;                     // no need to re-render metadata now
+        $persistent = false;                 // this change doesn't need to persist passed the next metadata render. 
+        p_set_metadata($ID, $data, $render, $persistent);
+   }
 
    function parse_match($match) {
       $this->output = "";
