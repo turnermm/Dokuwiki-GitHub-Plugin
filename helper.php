@@ -506,7 +506,7 @@ function populate($timestamp_start=0,$table='git_commits') {
         }
  
         $arr = $this->sqlite->res2arr($res);
-
+        if($arr) $q .= " [Rows:  " . count($arr) . "] ";
         return array($arr,  $q);
      
   }
@@ -695,7 +695,7 @@ function populate($timestamp_start=0,$table='git_commits') {
         if(!$phrase1) return "";
         if(!$phrase2) return $phrase1; 
         $OP = ($op == 'AND') ? ' AND ' : ' OR ';  
-        return " ($phrase1) $OP ($phrase2) ";
+        return " (($phrase1) $OP ($phrase2)) ";
   }
 
   function get_timestamp($dstr) {
