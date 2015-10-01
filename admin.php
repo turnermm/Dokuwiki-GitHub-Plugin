@@ -35,9 +35,9 @@ class admin_plugin_dwcommits extends DokuWiki_Admin_Plugin {
      */
     function getInfo(){
       return array(
-        'author' => 'me',
-        'email'  => 'me@somesite.com',
-        'date'   => '20yy-mm-dd',
+        'author' => 'Myron Turner',
+        'email'  => 'turnermm02@shaw.ca',
+        'date'   => '2015-10-01',
         'name'   => 'admin plugin dwcommits',
         'desc'   => 'demonstration dwcommits',
         'url'    => 'http://www.dokuwiki.org/plugin:commits',
