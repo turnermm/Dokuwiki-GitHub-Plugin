@@ -1,7 +1,7 @@
 base dwcommits
 author Myron Turner
 email turnermm02@shaw.ca
-date 2017-04-18
+date 2018-06-05
 name dwcommits Plugin
 desc Fri Feb 18 00:00:03 CST 2011
 url http://www.dokuwiki.org/plugin:dwcommits

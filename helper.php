@@ -158,7 +158,9 @@ class helper_plugin_dwcommits extends DokuWiki_Plugin {
             if(!$db->init($this->db_name,dirname(__FILE__).'/db/')){
                 return false;
             }             
+            if(defined(DOKU_SQLITE_ASSOC))            
             $db->fetchmode = DOKU_SQLITE_ASSOC;
+            else $db->fetchmode = 'DOKU_SQLITE_ASSOC';
         }
         $this->sqlite = $db; 
         return $db;
